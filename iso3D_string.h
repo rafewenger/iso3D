@@ -220,8 +220,8 @@ namespace ISO3D {
    *  - Version with input string of type char *.
    *  @param s Input string. (Type char *.)
    */
-  void split_string(const char * s, const char c,
-                    std::string & prefix, std::string & suffix)
+  inline void split_string(const char * s, const char c,
+                           std::string & prefix, std::string & suffix)
   {
     split_string(std::string(s), c, prefix, suffix);
   }

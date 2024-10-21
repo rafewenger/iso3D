@@ -1,6 +1,8 @@
 
 # Ignore executables
 *.exe
+test_error
+test_string
 
 # Ignore backups
 *~
