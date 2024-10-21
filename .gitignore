@@ -1,0 +1,15 @@
+
+# Ignore executables
+*.exe
+
+# Ignore backups
+*~
+  
+# Ignore CMake files and directories
+.project
+.cproject
+.settings
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+CMakeFiles
