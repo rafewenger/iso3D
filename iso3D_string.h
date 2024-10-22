@@ -29,9 +29,11 @@
 
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "iso3D_error.h"
+
 
 namespace ISO3D {
 
@@ -123,15 +125,25 @@ namespace ISO3D {
   //@{
 
 
-  /// @brief Format value as type string using output string stream.
-  /// - Throw error if unable to convert value to string.
+  /*!
+   *  @brief Format value as type string using output string stream.
+   *  - Throw error if unable to convert value to string.
+   *  @pre Template type T is a scalar type.
+   */
   template <typename T>
-  std::string val2string(T x)
+  std::string val2string(T & x)
   {
     std::ostringstream s_stream;
 
-    s_stream << x;
+    if (std::is_scalar<T>::value == false) {
+      ISO3D::PROCEDURE_ERROR error("val2string");
+      error.AddToMessage("Error converting value to string.");
+      error.AddToMessage("Value is not a scalar type.");
+      throw error;
+    }
     
+    s_stream << x;
+
     if (s_stream.bad()) {
       ISO3D::PROCEDURE_ERROR error("val2string");
       error.AddToMessage("Error converting value ", x, "to string.");
