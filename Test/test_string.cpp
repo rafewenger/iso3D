@@ -26,8 +26,10 @@ public:
 
 // Forward declarations
 void run_string2val_tests();
+void run_string2vector_tests();
 void run_val2string_tests();
 void run_array2string_tests();
+void run_vector2string_tests();
 
 
 int main(int argc, char ** argv)
@@ -36,13 +38,24 @@ int main(int argc, char ** argv)
   using std::endl;
   
   try {
+    cout << "*** Testing string2val(). ***" << endl;
     run_string2val_tests();
     cout << endl;
+
+    cout << "*** Testing string2vector(). ***" << endl;
+    run_string2vector_tests();
+    cout << endl;    
     
+    cout << "*** Testing val2string(). ***" << endl;
     run_val2string_tests();
     cout << endl;
 
+    cout << "*** Testing array2string(). ***" << endl;
     run_array2string_tests();
+    cout << endl;
+    
+    cout << "*** Testing vector2string(). ***" << endl;
+    run_vector2string_tests();
     cout << endl;
   }
   catch (ERROR & error) {
@@ -55,9 +68,8 @@ int main(int argc, char ** argv)
 
 
 // *****************************************************************
-// Test converting string to values/vectors.
+// Test string2val()
 // *****************************************************************
-
 
 template <typename T>
 void test_string2val(const char * s, const char * type_name)
@@ -84,6 +96,40 @@ void test_string2val_int(const char * s)
 
 void test_string2val_float(const char * s)
 { test_string2val<float>(s, "float"); }
+
+
+void run_string2val_tests()
+{
+  using std::cout;
+  using std::cerr;
+  using std::endl;
+  
+  try {
+    test_string2val_int("31");
+    test_string2val_int("31  ");
+    test_string2val_int("31.5");
+  }
+  catch (ERROR & error) {
+    error.Out(cerr);
+  }
+  cout << endl;
+  
+  try {
+    test_string2val_float("31");
+    test_string2val_float("31.5");
+    test_string2val_float("31.5  ");
+    test_string2val_float("31.5.7");
+  }
+  catch (ERROR & error) {
+    error.Out(cerr);
+  }  
+  cout << endl;
+}
+
+
+// *****************************************************************
+// Test string2vector
+// *****************************************************************
 
 
 template <typename T>
@@ -160,33 +206,12 @@ void test_string2vector_int(const char * s1, const char * s2)
 void test_string2vector_string(const char * s)
 { test_string2vector<std::string>(s, "string"); }
 
-void run_string2val_tests()
+void run_string2vector_tests()
 {
   using std::cout;
   using std::cerr;
   using std::endl;
   
-  try {
-    test_string2val_int("31");
-    test_string2val_int("31  ");
-    test_string2val_int("31.5");
-  }
-  catch (ERROR & error) {
-    error.Out(cerr);
-  }
-  cout << endl;
-  
-  try {
-    test_string2val_float("31");
-    test_string2val_float("31.5");
-    test_string2val_float("31.5  ");
-    test_string2val_float("31.5.7");
-  }
-  catch (ERROR & error) {
-    error.Out(cerr);
-  }  
-  cout << endl;
-
   try {
     test_string2vector_int("3 33 333");
     test_string2vector_int("3 33 333  ");
@@ -235,7 +260,7 @@ void run_string2val_tests()
 
 
 // *****************************************************************
-// Test converting values to string.
+// Test val2string() and bool2string()
 // *****************************************************************
 
 template <typename T>
@@ -315,7 +340,7 @@ void run_val2string_tests()
 
 
 // *****************************************************************
-// Test converting arrays to string.
+// Test converting arrays and C++ vectors to strings.
 // *****************************************************************
 
 template <typename T>
@@ -328,6 +353,23 @@ void test_array2string
   const std::string s = array2string(x,length,",");
   cout << "Type " << type_name << ", array:";
   for (int i = 0; i < length; i++) {
+    cout << "  " << x[i];
+  }
+  cout << endl;
+  cout << "  String: \"" << s << "\"" << endl;  
+}
+
+
+template <typename T>
+void test_vector2string
+(const std::vector<T> & x, const char * type_name)
+{
+  using std::cout;
+  using std::endl;
+
+  const std::string s = vector2string(x,",");
+  cout << "Type " << type_name << ", C++ vector:";
+  for (size_t i = 0; i < x.size(); i++) {
     cout << "  " << x[i];
   }
   cout << endl;
@@ -349,6 +391,34 @@ void run_array2string_tests()
   try {
     test_array2string(x, DIM3, "int");
     test_array2string(y, DIM3, "float");
+  }
+  catch (ERROR & error) {
+    error.Out(cerr);
+  }
+  
+}
+
+
+void run_vector2string_tests()
+{
+  using std::vector;
+  vector<int> vI;
+  vector<float> vF;
+
+  using std::cout;
+  using std::cerr;
+  using std::endl;
+
+  vI.push_back(88);
+  vI.push_back(99);
+
+  vF.push_back(6.6);
+  vF.push_back(7.7);
+  vF.push_back(8.8);
+
+  try {
+    test_vector2string(vI, "int");
+    test_vector2string(vF, "float");
   }
   catch (ERROR & error) {
     error.Out(cerr);

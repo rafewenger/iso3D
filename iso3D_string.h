@@ -189,7 +189,7 @@ namespace ISO3D {
   /// - Throw error if unable to convert value to string.
   template <typename T>
   std::string vector2string
-  (const std::vector<T> & x, const char * separator, std::string & s_out)
+  (const std::vector<T> & x, const char * separator)
   {
     if (x.size() <= 0) { return std::string(""); };
 
