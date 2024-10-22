@@ -30,6 +30,7 @@ void run_string2vector_tests();
 void run_val2string_tests();
 void run_array2string_tests();
 void run_vector2string_tests();
+void run_split_string_tests();
 
 
 int main(int argc, char ** argv)
@@ -57,6 +58,10 @@ int main(int argc, char ** argv)
     cout << "*** Testing vector2string(). ***" << endl;
     run_vector2string_tests();
     cout << endl;
+
+    cout << "*** Testing split_string(). ***" << endl;
+    run_split_string_tests();
+    cout << endl;    
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
@@ -419,6 +424,50 @@ void run_vector2string_tests()
   try {
     test_vector2string(vI, "int");
     test_vector2string(vF, "float");
+  }
+  catch (ERROR & error) {
+    error.Out(cerr);
+  }
+  
+}
+
+
+// *****************************************************************
+// Test split_string()
+// *****************************************************************
+
+void run_split_string_tests()
+{
+  using std::string;
+  
+  const char * pathA = "/usr/johnsmith/src/temp.src.cpp";
+  string dirname, filename, filename_base, filename_suffix;
+  string prefix, suffix;
+
+  using std::cerr;
+  using std::cout;
+  using std::endl;
+  
+  try {
+    split_string(pathA, '/', dirname, filename);
+    cout << "Path: " << pathA << endl;
+    cout << "Directory: " << dirname << endl;
+    cout << "Filename: " << filename  << endl;
+    cout << endl;
+    
+    split_string(filename, '.', filename_base, filename_suffix);
+    cout << "Filename base: " << filename_base << endl;
+    cout << "Filename suffix: " << filename_suffix << endl;
+    cout << endl;
+    
+    cout << "Splitting filename with character \'-\'. (No split.)"
+         << endl;
+    split_string(filename, '-', prefix, suffix);
+    cout << "Filename: " << filename  << endl;
+    cout << "Prefix: " << prefix  << endl;
+    cout << "Suffix: " << suffix  << endl;
+    
+    
   }
   catch (ERROR & error) {
     error.Out(cerr);
