@@ -12,20 +12,38 @@
 using namespace ISO3D;
 
 
+// Class for testing routines on classes.
+class classA {
+
+public:
+  int x;
+  
+public:
+  // Constructor
+  classA()
+  { x = 2; };
+};
+
 // Forward declarations
 void run_string2val_tests();
 void run_val2string_tests();
+void run_array2string_tests();
 
 
 int main(int argc, char ** argv)
 {
-  using std::cout, std::endl;
+  using std::cout;
+  using std::endl;
   
   try {
     run_string2val_tests();
     cout << endl;
     
     run_val2string_tests();
+    cout << endl;
+
+    run_array2string_tests();
+    cout << endl;
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
@@ -185,7 +203,9 @@ void test_string_vector(const char * s)
 
 void run_string2val_tests()
 {
-  using std::cout, std::cerr, std::endl;
+  using std::cout;
+  using std::cerr;
+  using std::endl;
   
   try {
     test_int("31");
@@ -271,32 +291,108 @@ void test_val2string(const T x, const char * type_name)
 }
 
 
+void test_bool2string(const bool flag)
+{
+  using std::cout;
+  using std::endl;
+  
+  const std::string s = bool2string(flag);
+  cout << "Type bool, value: ";
+  if (flag) { cout << "true" << endl; }
+  else { cout << "false" << endl; }
+  cout << "  String: \"" << s << "\"" << endl;
+}
+
+
 void run_val2string_tests()
 {
   const int x = 5;
   const float y = 3.14;
+  const bool flagT = true;
+  const bool flagF = false;
+  classA A;
   std::string s;
 
-  using std::cout, std::cerr, std::endl;
+  using std::cout;
+  using std::cerr;
+  using std::endl;
   
   try {
-    class classA {
 
-    public:
-      classA() {};
-      
-      int x = 2;
-      float y = 8.5;
-    } sA;
-    
+    test_val2string(555, "int");
+    test_val2string(1.23, "float");
     test_val2string(x, "int");
     test_val2string(y, "float");
+    test_bool2string(flagT);
+    test_bool2string(flagF);
+    test_bool2string(true);
+    test_bool2string(false);
+    cout << endl;
 
-    // Can't convert sA. Throws an error.
+    // Can't convert string. Throws an error.
+    cout << "Attempt to call val2string on a C++ string. (Throws an error.)"
+         << endl;
+    const std::string s = val2string(s);
+    cout << "String " << s << endl;
+  }
+  catch (ERROR & error) {
+    error.Out(cerr);
+  }
+
+  cout << endl;
+  
+  try {
+    // Can't convert class. Throws an error.
+    cout << "Attempt to call val2string on a C++ class. (Throws an error.)"
+         << endl;
     const std::string s = val2string(s);
     cout << "String " << s << endl;
   }
   catch (ERROR & error) {
     error.Out(cerr);
   }  
+  
+}
+
+
+// *****************************************************************
+// Test converting arrays to string.
+// *****************************************************************
+
+template <typename T>
+void test_array2string
+(const T x[], const int length, const char * type_name)
+{
+  using std::cout;
+  using std::endl;
+
+  const std::string s = array2string(x,length,",");
+  cout << "Type " << type_name << ", array:";
+  for (int i = 0; i < length; i++) {
+    cout << "  " << x[i];
+  }
+  cout << endl;
+  cout << "  String: \"" << s << "\"" << endl;  
+}
+
+
+void run_array2string_tests()
+{
+  const int DIM3(3);
+  const int x[DIM3] = { 5, 6, 7};
+  const float y[DIM3] = { 5.1, 6.2, 7.3};
+  std::string s;
+
+  using std::cout;
+  using std::cerr;
+  using std::endl;
+
+  try {
+    test_array2string(x, DIM3, "int");
+    test_array2string(y, DIM3, "float");
+  }
+  catch (ERROR & error) {
+    error.Out(cerr);
+  }
+  
 }

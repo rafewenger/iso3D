@@ -29,6 +29,7 @@
 
 #include <sstream>
 #include <string>
+#include <typeinfo>
 #include <type_traits>
 #include <vector>
 
@@ -215,7 +216,8 @@ namespace ISO3D {
   //@{
 
   /*!
-   *  @brief Split string at last occurrence of character c into prefix and suffix.
+   *  @brief Split string at last occurrence of character c 
+   *    into prefix and suffix.
    *  @param s Input string.
    *  @param c Split at character c.
    *  @param[out] prefix Prefix. All characters before last occurrence of c.
