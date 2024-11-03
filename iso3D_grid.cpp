@@ -24,9 +24,11 @@
 */
 
 
-#include "isogrid.h"
+#include "iso3D_grid.h"
 
-GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
+using namespace ISO3D;
+
+void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
 {
   for (int d = 0; d < DIM3; d++)
     { axis_size[d] = asize[d]; }
@@ -38,7 +40,7 @@ GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
 }
 
 
-GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
+void GRID3D::Init()
 {
   for (int d = 0; d < DIM3; d++) {
     axis_size[d] = 0;
