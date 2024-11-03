@@ -29,6 +29,7 @@
 
 #include <sstream>
 #include <string>
+#include <typeinfo>
 #include <type_traits>
 #include <vector>
 
@@ -188,7 +189,7 @@ namespace ISO3D {
   /// - Throw error if unable to convert value to string.
   template <typename T>
   std::string vector2string
-  (const std::vector<T> & x, const char * separator, std::string & s_out)
+  (const std::vector<T> & x, const char * separator)
   {
     if (x.size() <= 0) { return std::string(""); };
 
@@ -215,7 +216,8 @@ namespace ISO3D {
   //@{
 
   /*!
-   *  @brief Split string at last occurrence of character c into prefix and suffix.
+   *  @brief Split string at last occurrence of character c 
+   *    into prefix and suffix.
    *  @param s Input string.
    *  @param c Split at character c.
    *  @param[out] prefix Prefix. All characters before last occurrence of c.
