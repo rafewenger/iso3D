@@ -46,7 +46,8 @@ void output_grid(const GRID3D & grid)
   using std::endl;
   
   cout << "Dimension: " << grid.Dimension() << endl;
-
+  grid.OutAxisSize(cout, "Axis size: ", "\n");
+  
   // TO BE CONTINUED...
 }
 

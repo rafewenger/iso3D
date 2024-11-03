@@ -27,6 +27,7 @@
 #ifndef _ISO3D_GRID_H_
 #define _ISO3D_GRID_H_
 
+#include "iso3D_const.h"
 #include "iso3D_types.h"
 #include "iso3D_cube.h"
 
@@ -123,7 +124,42 @@ namespace ISO3D {
     inline VERTEX_INDEX CubeVertex
       (const CUBE_INDEX icube, const int i) const
     { return icube+cube_vertex_increment[i]; }
+
+    
+    // *** Output functions - Mainly for debugging ***
+
+    /// @brief Output axis size.
+    template <typename OSTREAM_TYPE>
+    void OutAxisSize(OSTREAM_TYPE & out) const;
+
+    /*!
+     *  @overload
+     *  @brief Output axis size with preceding and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutAxisSize
+    (OSTREAM_TYPE & out, const char * prefix, const char * suffix) const
+    { out << prefix; OutAxisSize(out); out << suffix; }
+    
   };
+
+
+
+  // *****************************************************************
+  // GRID3D Output functions - Mainly for debugging
+  // *****************************************************************
+
+  template <typename OSTREAM_TYPE>  
+  void GRID3D::OutAxisSize(OSTREAM_TYPE & out) const
+  {
+    out << "(";
+    for (int d = 0; d < Dimension(); d++) {
+      out << axis_size[d];
+      if (d+1 < Dimension())
+        { out << ","; }
+    }
+    out << ")";
+  }
   
 }
 
