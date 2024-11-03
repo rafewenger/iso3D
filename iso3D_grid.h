@@ -27,18 +27,20 @@
 #ifndef _ISO3D_GRID_H_
 #define _ISO3D_GRID_H_
 
-namespace ISO3D {
-
 #include "iso3D_types.h"
+#include "iso3D_cube.h"
+
+namespace ISO3D {
 
   /// @brief Class representing a 3D grid.
   class GRID3D {
 
   protected:
-    const AXIS_SIZE_TYPE axis_size[DIM3];
-    const VERTEX_INDEX axis_increment[DIM3];
-    const VERTEX_INDEX num_vertices;
-    const CUBE_INDEX num_cubes;
+    AXIS_SIZE_TYPE axis_size[DIM3];
+    VERTEX_INDEX axis_increment[DIM3];
+    VERTEX_INDEX cube_vertex_increment[CUBE3D::NumVertices()];
+    VERTEX_INDEX num_vertices;
+    CUBE_INDEX num_cubes;
 
     /// @brief Initialize data structure.
     void Init(const AXIS_SIZE_TYPE asize[DIM3]);
@@ -75,13 +77,17 @@ namespace ISO3D {
 
     // *** Get functions ***
 
+    /// @brief Return grid dimension. (Always 3).
+    constexpr int Dimension() const
+    { return 3; }
+    
     /// @brief Return number of vertices in grid.
     inline const VERTEX_INDEX NumVertices() const
-    { return num_vertice; }
+    { return num_vertices; }
 
     /// @brief Return number of cube in grid.
     inline const VERTEX_INDEX NumCubes() const
-    { return num_vertice; }
+    { return num_cubes; }
 
     /// @brief Return axis_size[d].
     inline int AxisSize(const int d) const

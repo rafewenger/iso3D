@@ -1,6 +1,6 @@
 /*!
- *  @file iso3D_types.h
- *  @brief Type definitions for iso3D.
+ *  @file iso3D_grid.cpp
+ *  @brief Grid class.
  *  @authors "Rephael Wenger"
  */
 
@@ -24,22 +24,31 @@
 */
 
 
-#ifndef _ISO3D_TYPES_H_
-#define _ISO3D_TYPES_H_
+#include "isogrid.h"
 
-namespace ISO3D {
+GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
+{
+  for (int d = 0; d < DIM3; d++)
+    { axis_size[d] = asize[d]; }
 
-  // Grid types.
-  typedef int VERTEX_INDEX;
-  typedef VERTEX_INDEX CUBE_INDEX;
-  typedef int AXIS_SIZE_TYPE;
-  typedef int NUMBER_TYPE;
+  // TO BE CONTINUED
 
-  // Cube face types.
-  typedef unsigned char CUBE_VERTEX_INDEX;
-  typedef unsigned char CUBE_FACET_INDEX;
-  typedef unsigned char CUBE_EDGE_INDEX;
+  // Set num_vertices, num_cubes.
+  // SET axis_increment[] and cube_vertex_increment[].
 }
 
-#endif
+
+GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
+{
+  for (int d = 0; d < DIM3; d++) {
+    axis_size[d] = 0;
+    axis_increment[d] = 0;
+  }
+
+  num_vertices = 0;
+  num_cubes = 0;
+
+  for (int i = 0; i < CUBE3D::NumVertices(); i++)
+    { cube_vertex_increment[i] = 0; }
+}
 

@@ -34,13 +34,13 @@ namespace ISO3D {
 class CUBE3D {
 
  public:
-  int NumVertices() const
+  static constexpr int NumVertices()
   { return 3; }
 
-  int NumEdges() const
+  static constexpr int NumEdges()
   { return 12; }
   
-  int NumFacets() const
+  static constexpr int NumFacets()
   { return 6; }};
 }
 

@@ -1,6 +1,6 @@
 /*!
- *  @file iso3D_types.h
- *  @brief Type definitions for iso3D.
+ *  @file iso3D_const.h
+ *  @brief ISO3D global constants
  *  @authors "Rephael Wenger"
  */
 
@@ -24,21 +24,15 @@
 */
 
 
-#ifndef _ISO3D_TYPES_H_
-#define _ISO3D_TYPES_H_
+#ifndef _ISO3D_CONST_H_
+#define _ISO3D_CONST_H_
 
 namespace ISO3D {
-
-  // Grid types.
-  typedef int VERTEX_INDEX;
-  typedef VERTEX_INDEX CUBE_INDEX;
-  typedef int AXIS_SIZE_TYPE;
-  typedef int NUMBER_TYPE;
-
-  // Cube face types.
-  typedef unsigned char CUBE_VERTEX_INDEX;
-  typedef unsigned char CUBE_FACET_INDEX;
-  typedef unsigned char CUBE_EDGE_INDEX;
+  
+  // Global variables.
+  const int DIM3(3);
+  const int NUM_VERTICES_PER_TRIANGLE(3);
+  
 }
 
 #endif
