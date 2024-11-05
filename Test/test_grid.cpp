@@ -18,20 +18,23 @@ using std::endl;
 
 // Global variables
 bool flag_output_coord(false);
+bool flag_boundary(false);
 
 // Forward declarations
 void parse_command_line(int argc, char ** argv);
 void output_grid(const GRID3D & grid);
 void output_grid_vertices(const GRID3D & grid);
-void output_prev_next_grid_vertices(const GRID3D & grid);
+void output_some_prev_next_boundary_grid_vertices(const GRID3D & grid);
 void output_prev_next_grid_vertex(const GRID3D & grid, const int iv);
-
+void output_prev_next_grid_vertex
+(const GRID3D & grid, const GRID_COORD vertex_coord[DIM3]);
 
 int main(int argc, char ** argv)
 {
   try {
     const AXIS_SIZE_TYPE asizeA[DIM3] = { 3, 4, 5 };
     GRID3D gridA(asizeA);
+    GRID_COORD grid_coordA123[DIM3] = { 1, 2, 3 };
 
     parse_command_line(argc, argv);
     
@@ -44,7 +47,11 @@ int main(int argc, char ** argv)
       cout << endl;
     }
 
-    output_prev_next_grid_vertices(gridA);
+    output_prev_next_grid_vertex(gridA, grid_coordA123);
+    
+    if (flag_boundary) {
+      output_some_prev_next_boundary_grid_vertices(gridA);
+    }
     cout << endl;
   }
   catch (ERROR & error) {
@@ -58,7 +65,7 @@ int main(int argc, char ** argv)
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: test_grid -coord" << endl;
+  out << "Usage: test_grid -coord -boundary" << endl;
 }
 
 
@@ -68,7 +75,15 @@ void usage_error()
   exit(-1);
 }
 
-  
+void help_msg()
+{
+  usage_msg(cout);
+  cout << "  -coord: Print coordinates of each vertex." << endl;
+  cout << "  -boundary: Print prev/next of some vertices on the grid boundary."
+       << endl;
+  exit(0);
+}
+
 void parse_command_line(int argc, char ** argv)
 {
   int iarg = 1;
@@ -76,6 +91,12 @@ void parse_command_line(int argc, char ** argv)
     std::string s = argv[iarg];
     if (s == "-coord") {
       flag_output_coord = true;
+    }
+    else if (s == "-boundary") {
+      flag_boundary = true;
+    }
+    else if (s == "-help") {
+      help_msg();
     }
     else {
       cerr << "Usage error. Illegal parameter: " << s << endl;
@@ -140,7 +161,14 @@ void output_prev_next_grid_vertex(const GRID3D & grid, const int iv)
 }
 
 
-void output_prev_next_grid_vertices(const GRID3D & grid)
+void output_prev_next_grid_vertex
+(const GRID3D & grid, const GRID_COORD vertex_coord[DIM3])
+{
+  const VERTEX_INDEX iv = grid.ComputeVertexIndex(vertex_coord);
+  output_prev_next_grid_vertex(grid, iv);
+}
+  
+void output_some_prev_next_boundary_grid_vertices(const GRID3D & grid)
 {
   output_prev_next_grid_vertex(grid, 0);
   for (int d = 0; d < grid.Dimension(); d++) {
@@ -148,11 +176,4 @@ void output_prev_next_grid_vertices(const GRID3D & grid)
     output_prev_next_grid_vertex(grid, grid.AxisSize(d));
   }
   output_prev_next_grid_vertex(grid, grid.NumVertices()-1);
-
-  if ((grid.AxisSize(0) > 1) && (grid.AxisSize(1) > 2) &&
-      (grid.AxisSize(2) > 3)) {
-    const VERTEX_INDEX iv =
-      1 + 2*grid.AxisIncrement(1) + 3*grid.AxisIncrement(2);
-    output_prev_next_grid_vertex(grid, iv);
-  }
 }

@@ -30,6 +30,7 @@
 #include "iso3D_const.h"
 #include "iso3D_types.h"
 #include "iso3D_cube.h"
+#include "iso3D_error.h"
 
 namespace ISO3D {
 
@@ -133,6 +134,26 @@ namespace ISO3D {
      */
     template <typename CTYPE>
     void ComputeCoord(const int iv, CTYPE vertex_coord[DIM3]) const;
+
+    /*!
+     *  @brief Compute index of vertex with coordinates vertex_coord[].
+     *  @pre 0 <= vertex_coord[d] < AxisSize(d).
+     */
+    template <typename CTYPE>
+    VERTEX_INDEX ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const;
+    
+
+    // *** Check functions ***
+
+    /*!
+     *  @brief Return true if coordinate c is within bounds.
+     *  - Return false and set error if coordinate is out of bounds.
+     *  - Return true if 0 <= c < AxisSize(d).
+     *  @param d Coordinate is on axis d.
+     *  @param c Coordinate.
+     */
+    template <typename CTYPE>
+    bool CheckVertexCoord(const int d, const CTYPE c, ERROR & error) const;
     
     // *** Output functions - Mainly for debugging ***
 
@@ -225,6 +246,56 @@ namespace ISO3D {
       vertex_coord[d] = CTYPE(k % AxisSize(d));
       k = k / AxisSize(d);
     }
+  }
+
+  
+  /*!
+   *  @brief Compute index of vertex with coordinates vertex_coord[].
+   *  @pre 0 <= vertex_coord[d] < AxisSize(d).
+   */
+  template <typename CTYPE>
+  VERTEX_INDEX GRID3D::ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const
+  {
+    PROCEDURE_ERROR error("GRID3D:ComputeVertexIndex");
+
+    VERTEX_INDEX iv = 0;
+    
+    for (int d = 0; d < DIM3; d++) {
+      if (!CheckVertexCoord(d, vertex_coord[d], error))
+        { throw error; }
+
+      iv += vertex_coord[d]*AxisIncrement(d);
+    }
+
+    return iv;
+  }
+
+  
+  // *****************************************************************
+  // GRID3D Check functions
+  // *****************************************************************
+  
+  // Return true if coordinate c is within bounds.
+  template <typename CTYPE>
+  bool GRID3D::CheckVertexCoord
+  (const int d, const CTYPE c, ERROR & error) const
+  {
+    if (c < 0) {
+      error.AddToMessage("Error. Illegal negative vertex coordinate.");
+      error.AddToMessage("  vertex_coord[", d, "] = ", c, ".");
+      return false;
+    }
+
+    if (c > AxisSize(d)) {
+      error.AddToMessage("Error. Illegal vertex coordinate (too large).");
+      error.AddToMessage("  vertex_coord[", d, "] = ", c, ".");
+      error.AddToMessage("  axis_size[", d, "] = ", AxisSize(d), ".");
+      error.AddToMessage
+        ("  Vertex coordinate must be less than axis size.");
+      return false;
+    }
+
+    return true;
   }
 
   
