@@ -154,6 +154,33 @@ namespace ISO3D {
      */
     template <typename CTYPE>
     bool CheckVertexCoord(const int d, const CTYPE c, ERROR & error) const;
+
+    /*!
+     *  @brief Return true if cube coordinate c is within bounds.
+     *  - Return false and set error if coordinate is out of bounds.
+     *  - Return true if 0 <= c < AxisSize(d)-1.
+     *  @param d Coordinate is on axis d.
+     *  @param c Coordinate.
+     */
+    template <typename CTYPE>
+    bool CheckCubeCoord(const int d, const CTYPE c, ERROR & error) const;
+
+    /*!
+     *  @overload
+     *  @brief Return true if all cube coordinates are within bounds.
+     *  - Check all cube coordinates.
+     *  @param cube_coord[] Cube coordinates.
+     *  @param error Error messages, if some cube coordinate is out of bounds.
+     */
+    template <typename CTYPE>
+    bool CheckCubeCoord
+    (const CTYPE cube_coord[DIM3], ERROR & error) const;
+    
+    /*!
+     *  @brief Return true if cube invex is valid.
+     */
+    bool CheckCubeIndex(const CUBE_INDEX icube, ERROR & error) const;
+    
     
     // *** Output functions - Mainly for debugging ***
 
@@ -281,14 +308,13 @@ namespace ISO3D {
   (const int d, const CTYPE c, ERROR & error) const
   {
     if (c < 0) {
-      error.AddToMessage("Error. Illegal negative vertex coordinate.");
-      error.AddToMessage("  vertex_coord[", d, "] = ", c, ".");
+      error.AddToMessage("Error. Illegal ", d, "'th vertex coordinate ", c, ".");
+      error.AddToMessage("  Vertex coordinates must be non-negative.");
       return false;
     }
 
-    if (c > AxisSize(d)) {
-      error.AddToMessage("Error. Illegal vertex coordinate (too large).");
-      error.AddToMessage("  vertex_coord[", d, "] = ", c, ".");
+    if (c >= AxisSize(d)) {
+      error.AddToMessage("Error. Illegal ", d, "'th vertex coordinate ", c, ".");
       error.AddToMessage("  axis_size[", d, "] = ", AxisSize(d), ".");
       error.AddToMessage
         ("  Vertex coordinate must be less than axis size.");
@@ -298,7 +324,43 @@ namespace ISO3D {
     return true;
   }
 
-  
+
+  // Return true if cube coordinate c is within bounds.
+  template <typename CTYPE>
+  bool GRID3D::CheckCubeCoord(const int d, const CTYPE c, ERROR & error) const
+  {
+    if (c < 0) {
+      error.AddToMessage("Error. Illegal ", d, "'th cube coordinate ", c, ".");
+      error.AddToMessage("  Cube coordinates must be non-negative.");
+      return false;
+    }
+
+    if (c+1 >= AxisSize(d)) {
+      error.AddToMessage("Error. Illegal ", d, "'th cube coordinate ", c, ".");
+      error.AddToMessage("  axis_size[", d, "] = ", AxisSize(d), ".");
+      error.AddToMessage
+        ("  Cube coordinate plus 1 must be less than axis size.");
+      return false;
+    }
+
+    return true;
+  }
+
+    
+  // Return true if cube coordinates are all within bounds.
+  template <typename CTYPE>
+  bool GRID3D::CheckCubeCoord
+  (const CTYPE cube_coord[DIM3], ERROR & error) const
+  {
+    for (int d = 0; d < DIM3; d++) {
+      if (!CheckCubeCoord(d, cube_coord[d], error))
+        { return false; }
+    }
+
+    return true;
+  }    
+
+
   // *****************************************************************
   // GRID3D Output functions - Mainly for debugging
   // *****************************************************************
