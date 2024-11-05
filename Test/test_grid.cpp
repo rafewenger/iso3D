@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "iso3D_const.h"
+#include "iso3D_cube.h"
 #include "iso3D_grid.h"
 #include "iso3D_error.h"
 
@@ -28,6 +29,9 @@ void output_some_prev_next_boundary_grid_vertices(const GRID3D & grid);
 void output_prev_next_grid_vertex(const GRID3D & grid, const int iv);
 void output_prev_next_grid_vertex
 (const GRID3D & grid, const GRID_COORD vertex_coord[DIM3]);
+void output_cube_vertices
+(const GRID3D & grid, const GRID_COORD cube_coord[DIM3]);
+
 
 int main(int argc, char ** argv)
 {
@@ -53,6 +57,10 @@ int main(int argc, char ** argv)
       output_some_prev_next_boundary_grid_vertices(gridA);
     }
     cout << endl;
+
+    output_cube_vertices(gridA, grid_coordA123);
+    cout << endl;
+                         
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
@@ -176,4 +184,28 @@ void output_some_prev_next_boundary_grid_vertices(const GRID3D & grid)
     output_prev_next_grid_vertex(grid, grid.AxisSize(d));
   }
   output_prev_next_grid_vertex(grid, grid.NumVertices()-1);
+}
+
+
+void output_cube_vertices(const GRID3D & grid, const int icube)
+{
+  PROCEDURE_ERROR error("output_cube_vertices");
+
+  if (!grid.CheckCubeIndex(icube, error))
+    { throw error; }
+  
+  grid.OutVertexIndexAndCoord(cout, "Cube ", icube, ". Vertices: \n");
+  for (int j = 0; j < CUBE3D::NumVertices(); j++) {
+    const VERTEX_INDEX jv = grid.CubeVertex(icube, j);
+    grid.OutVertexIndexAndCoord(cout, "  Vertex ", jv, "\n");
+  }
+}
+
+
+void output_cube_vertices
+  (const GRID3D & grid, const GRID_COORD cube_coord[DIM3])
+{
+  const CUBE_INDEX icube = grid.ComputeVertexIndex(cube_coord);
+
+  output_cube_vertices(grid, icube);
 }
