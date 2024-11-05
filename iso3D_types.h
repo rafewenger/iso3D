@@ -34,6 +34,8 @@ namespace ISO3D {
   typedef VERTEX_INDEX CUBE_INDEX;
   typedef int AXIS_SIZE_TYPE;
   typedef int NUMBER_TYPE;
+  typedef VERTEX_INDEX GRID_COORD;
+  typedef GRID_COORD CUBE_COORD;
 
   // Cube face types.
   typedef unsigned char CUBE_VERTEX_INDEX;
