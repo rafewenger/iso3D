@@ -118,6 +118,8 @@ namespace ISO3D {
 
     /*!
      *  @brief Return i'th vertex of cube icube.
+     *  @pre icube is a valid cube index.
+     *  @pre i < 8.
      *  - Note: Does NOT check that icube is a cube index,
      *    nor that i is less than 8.
      */
@@ -125,12 +127,30 @@ namespace ISO3D {
       (const CUBE_INDEX icube, const int i) const
     { return icube+cube_vertex_increment[i]; }
 
+    /*!
+     *  @brief Compute coordinates of vertex iv.
+     *  @pre iv < NumVertices().
+     */
+    template <typename CTYPE>
+    void ComputeCoord(const int iv, CTYPE vertex_coord[DIM3]) const;
     
     // *** Output functions - Mainly for debugging ***
 
+    /*!
+     *  @brief Output array a[].
+     *  @tparam ETYPE Array element type.
+     *  @param out Output stream.
+     *  @param a[] Array.
+     *  @param array_length Array length.
+     */
+    template <typename OSTREAM_TYPE, typename ETYPE>
+    void OutArray
+    (OSTREAM_TYPE & out, const ETYPE a[], const int array_length) const;
+      
     /// @brief Output axis size.
     template <typename OSTREAM_TYPE>
-    void OutAxisSize(OSTREAM_TYPE & out) const;
+    void OutAxisSize(OSTREAM_TYPE & out) const
+    { OutArray(out, axis_size, Dimension()); }
 
     /*!
      *  @overload
@@ -143,7 +163,8 @@ namespace ISO3D {
 
     /// @brief Output axis increment.
     template <typename OSTREAM_TYPE>
-    void OutAxisIncrement(OSTREAM_TYPE & out) const;
+    void OutAxisIncrement(OSTREAM_TYPE & out) const
+    { OutArray(out, axis_increment, Dimension()); }
 
     /*!
      *  @overload
@@ -153,40 +174,86 @@ namespace ISO3D {
     void OutAxisIncrement
     (OSTREAM_TYPE & out, const char * prefix, const char * suffix) const
     { out << prefix; OutAxisIncrement(out); out << suffix; }      
-    
+
+    /// @brief Output cube vertex increment.
+    template <typename OSTREAM_TYPE>
+    void OutCubeVertexIncrement(OSTREAM_TYPE & out) const
+    { OutArray(out, cube_vertex_increment, CUBE3D::NumVertices()); }
+
+    /*!
+     *  @overload
+     *  @brief Output cube vertex increment with preceding 
+     *    and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutCubeVertexIncrement
+    (OSTREAM_TYPE & out, const char * prefix, const char * suffix) const
+    { out << prefix; OutCubeVertexIncrement(out); out << suffix; }
+
+    /// @brief Output vertex coordinates.
+    template <typename OSTREAM_TYPE>
+    void OutVertexCoord(OSTREAM_TYPE & out, const int iv) const;
+
+    /// @brief Output vertex index and vertex coordinates.
+    template <typename OSTREAM_TYPE>
+    void OutVertexIndexAndCoord(OSTREAM_TYPE & out, const int iv) const
+    { out << iv << " "; OutVertexCoord(out, iv); }
+
+    /*!
+     *  @overload
+     *  @brief Output vertex index and vertex coordinates
+     *    with preceding and following string.
+     */    
+    template <typename OSTREAM_TYPE>
+    void OutVertexIndexAndCoord
+    (OSTREAM_TYPE & out, const char * prefix, const int iv,
+     const char * suffix) const
+    { out << prefix; OutVertexIndexAndCoord(out,iv); out << suffix; }
+      
   };
 
 
+  // *****************************************************************
+  // GRID3D Member functions
+  // *****************************************************************  
 
+  template <typename CTYPE>
+  void GRID3D::ComputeCoord(const int iv, CTYPE vertex_coord[DIM3]) const
+  {
+    int k = iv;
+    for (int d = 0; d < DIM3; d++) {
+      vertex_coord[d] = CTYPE(k % AxisSize(d));
+      k = k / AxisSize(d);
+    }
+  }
+
+  
   // *****************************************************************
   // GRID3D Output functions - Mainly for debugging
   // *****************************************************************
 
-  template <typename OSTREAM_TYPE>  
-  void GRID3D::OutAxisSize(OSTREAM_TYPE & out) const
+  template <typename OSTREAM_TYPE, typename ETYPE>
+  void GRID3D::OutArray
+  (OSTREAM_TYPE & out, const ETYPE a[], const int array_length) const
   {
     out << "(";
-    for (int d = 0; d < Dimension(); d++) {
-      out << axis_size[d];
-      if (d+1 < Dimension())
-        { out << ","; }
+    for (int i = 0; i < array_length; i++) {
+      out << a[i];
+      if (i+1 < array_length) { out << ","; }
     }
     out << ")";
   }
 
-    
-  template <typename OSTREAM_TYPE>  
-  void GRID3D::OutAxisIncrement(OSTREAM_TYPE & out) const
+  // Output vertex coordinates.
+  template <typename OSTREAM_TYPE>
+  void GRID3D::OutVertexCoord(OSTREAM_TYPE & out, const int iv) const
   {
-    out << "(";
-    for (int d = 0; d < Dimension(); d++) {
-      out << axis_increment[d];
-      if (d+1 < Dimension())
-        { out << ","; }
-    }
-    out << ")";
+    GRID_COORD vertex_coord[DIM3];
+
+    ComputeCoord(iv, vertex_coord);
+    OutArray(out, vertex_coord, DIM3);
   }
-    
+  
 }
 
 #endif
