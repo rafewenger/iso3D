@@ -47,6 +47,9 @@ void output_grid(const GRID3D & grid)
   
   cout << "Dimension: " << grid.Dimension() << endl;
   grid.OutAxisSize(cout, "Axis size: ", "\n");
+  cout << "Number of grid vertices: " << grid.NumVertices() << endl;
+  cout << "Number of grid cubes: " << grid.NumCubes() << endl;
+  grid.OutAxisIncrement(cout, "Axis increment: ", "\n");
   
   // TO BE CONTINUED...
 }

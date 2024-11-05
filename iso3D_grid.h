@@ -140,6 +140,19 @@ namespace ISO3D {
     void OutAxisSize
     (OSTREAM_TYPE & out, const char * prefix, const char * suffix) const
     { out << prefix; OutAxisSize(out); out << suffix; }
+
+    /// @brief Output axis increment.
+    template <typename OSTREAM_TYPE>
+    void OutAxisIncrement(OSTREAM_TYPE & out) const;
+
+    /*!
+     *  @overload
+     *  @brief Output axis increment with preceding and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutAxisIncrement
+    (OSTREAM_TYPE & out, const char * prefix, const char * suffix) const
+    { out << prefix; OutAxisIncrement(out); out << suffix; }      
     
   };
 
@@ -160,7 +173,20 @@ namespace ISO3D {
     }
     out << ")";
   }
-  
+
+    
+  template <typename OSTREAM_TYPE>  
+  void GRID3D::OutAxisIncrement(OSTREAM_TYPE & out) const
+  {
+    out << "(";
+    for (int d = 0; d < Dimension(); d++) {
+      out << axis_increment[d];
+      if (d+1 < Dimension())
+        { out << ","; }
+    }
+    out << ")";
+  }
+    
 }
 
 #endif

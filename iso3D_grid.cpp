@@ -30,13 +30,27 @@ using namespace ISO3D;
 
 void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
 {
-  for (int d = 0; d < DIM3; d++)
-    { axis_size[d] = asize[d]; }
+  // Initialize.
+  num_vertices = 1;
+  num_cubes = 1;
+  
+  for (int d = 0; d < DIM3; d++) {
+    axis_size[d] = asize[d];
+    num_vertices = num_vertices * asize[d];
+    
+    if (asize[d] > 0)
+      { num_cubes = num_cubes * (asize[d]-1); }
+    else
+      { num_cubes = 0; }
+  }
 
-  // TO BE CONTINUED
+  axis_increment[0] = 1;
+  for (int d = 1; d < DIM3; d++) {
+    axis_increment[d] = axis_increment[d-1]*asize[d-1];
+  }
 
-  // Set num_vertices, num_cubes.
-  // SET axis_increment[] and cube_vertex_increment[].
+  // TO BE CONTINUED...
+  // Set cube_vertex_increment[].
 }
 
 
