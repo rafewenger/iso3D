@@ -35,4 +35,5 @@ SET(CMAKE_CPP_FLAGS_RELEASE "-O3")
 ADD_EXECUTABLE(test_error test_error.cpp ../iso3D_error.cpp)
 ADD_EXECUTABLE(test_string test_string.cpp ../iso3D_string.cpp ../iso3D_error.cpp)
 ADD_EXECUTABLE(test_grid test_grid.cpp ../iso3D_grid.cpp ../iso3D_error.cpp)
+ADD_EXECUTABLE(test_cube test_cube.cpp ../iso3D_error.cpp)
   
