@@ -76,3 +76,14 @@ void GRID3D::Init()
     { cube_vertex_increment[i] = 0; }
 }
 
+
+
+// Return true if cube invex is valid.
+bool GRID3D::CheckCubeIndex(const CUBE_INDEX icube, ERROR & error) const
+{
+  CUBE_COORD cube_coord[DIM3];
+
+  ComputeCoord(icube, cube_coord);
+  return CheckCubeCoord(cube_coord, error);
+}
+  
