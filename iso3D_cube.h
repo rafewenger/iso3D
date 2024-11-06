@@ -63,9 +63,13 @@ namespace ISO3D {
       }
     }
     
-    
-    // *** Output functions - Mainly for debugging ***
 
+    // ***************************************************************
+    //! @name Output functions - Mainly for debugging 
+    // ***************************************************************    
+
+    //@{
+    
     /// @brief Output coordinates of vertex iv.
     template <typename OSTREAM_TYPE>
     void OutVertexCoord(OSTREAM_TYPE & out, const int iv) const;
@@ -96,6 +100,8 @@ namespace ISO3D {
     (OSTREAM_TYPE & out, const char * prefix, const int iv,
      const char * suffix) const
     { out << prefix; OutVertexIndexAndCoord(out,iv); out << suffix; }
+
+    //@}
     
   };
 

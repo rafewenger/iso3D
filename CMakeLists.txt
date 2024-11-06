@@ -31,6 +31,7 @@ ADD_COMPILE_OPTIONS(-Wall -Wno-unused-function)
 SET(CMAKE_CPP_FLAGS "-std=c++17")
 SET(CMAKE_CPP_FLAGS_RELEASE "-O3")
 
+# No executable yet
+# ADD_EXECUTABLE()
 
-ADD_EXECUTABLE()
-  
+ADD_CUSTOM_TARGET(doc COMMAND doxygen iso3D_doxygen.config)

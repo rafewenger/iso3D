@@ -57,7 +57,12 @@ namespace ISO3D {
     GRID3D(const AXIS_SIZE_TYPE asize[DIM3])
       { Init(asize); }
 
-    // *** Copy functions ***
+
+    // ***************************************************************
+    //! @name Copy functions
+    // ***************************************************************            
+
+    //@{
     
     /// @brief Copy function.
     const GRID3D & Copy(const GRID3D & right);
@@ -67,8 +72,14 @@ namespace ISO3D {
     const GRID3D & operator = (const GRID3D & right)
     { return Copy(right); }
 
+    //@}
+
     
-    // *** Set functions ***
+    // ***************************************************************
+    //! @name Set functions
+    // ***************************************************************            
+
+    //@{
 
     /// @brief Set axis size.
     void SetAxisSize(const AXIS_SIZE_TYPE axis_size[DIM3]);
@@ -76,9 +87,15 @@ namespace ISO3D {
     /// @brief Copy axis size from gridB.
     void CopyAxisSize(const GRID3D & gridB);
 
+    //@}
 
-    // *** Get functions ***
 
+    // ***************************************************************
+    //! @name Get functions
+    // ***************************************************************        
+
+    //@{
+    
     /// @brief Return grid dimension. (Always 3).
     constexpr int Dimension() const
     { return 3; }
@@ -128,6 +145,15 @@ namespace ISO3D {
       (const CUBE_INDEX icube, const int i) const
     { return icube+cube_vertex_increment[i]; }
 
+    //@}
+    
+
+    // ***************************************************************
+    //! @name Compute functions
+    // ***************************************************************    
+
+    //@{
+    
     /*!
      *  @brief Compute coordinates of vertex iv.
      *  @pre iv < NumVertices().
@@ -141,10 +167,16 @@ namespace ISO3D {
      */
     template <typename CTYPE>
     VERTEX_INDEX ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const;
+
+    //@}
     
 
-    // *** Check functions ***
+    // ***************************************************************
+    //! @name Check functions
+    // ***************************************************************    
 
+    //@{
+    
     /*!
      *  @brief Return true if coordinate c is within bounds.
      *  - Return false and set error if coordinate is out of bounds.
@@ -180,10 +212,16 @@ namespace ISO3D {
      *  @brief Return true if cube invex is valid.
      */
     bool CheckCubeIndex(const CUBE_INDEX icube, ERROR & error) const;
-    
-    
-    // *** Output functions - Mainly for debugging ***
 
+    //@}
+    
+
+    // ***************************************************************
+    //! @name Output functions - Mainly for debugging 
+    // ***************************************************************
+
+    //@{
+    
     /*!
      *  @brief Output array a[].
      *  @tparam ETYPE Array element type.
@@ -257,6 +295,8 @@ namespace ISO3D {
     (OSTREAM_TYPE & out, const char * prefix, const int iv,
      const char * suffix) const
     { out << prefix; OutVertexIndexAndCoord(out,iv); out << suffix; }
+
+    //@}
       
   };
 
