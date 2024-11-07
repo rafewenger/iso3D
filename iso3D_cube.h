@@ -27,31 +27,45 @@
 #ifndef _ISO3D_CUBE_H_
 #define _ISO3D_CUBE_H_
 
+#include <array>
+
 #include "iso3D_const.h"
 #include "iso3D_types.h"
 
 namespace ISO3D {
 
-  /// @brief 3D cube information.  
-  class CUBE3D {
+  // ***************************************************************
+  // Class CUBE3D_BASE
+  // ***************************************************************
+  
+  /// @brief Basic 3D cube information.  
+  class CUBE3D_BASE {
 
   public:
 
-    /// @brief Constructor
-    CUBE3D() {};
-    
+    /// @brief Constructor.
+    CUBE3D_BASE() {};
+
+    /// @brief Return cube dimension (3).
     static constexpr int Dimension()
     { return DIM3; }
     
+    /// @brief Return number of cube vertices (8).
     static constexpr int NumVertices()
     { return 8; }
 
+    /// @brief Return number of cube edges (12).
     static constexpr int NumEdges()
     { return 12; }
-    
+
+    /// @brief Return number of cube facets (6).
     static constexpr int NumFacets()
     { return 6; }
 
+    /// @brief Return number of vertices per cube facet (4).
+    static constexpr int NumVerticesPerFacet()
+    { return 4; }
+    
     /// @brief Return d'th coordinate of vertex iv.
     CUBE_COORD VertexCoord(const int iv, const int d) const
     {
@@ -135,12 +149,57 @@ namespace ISO3D {
   };
 
 
+  // ***************************************************************
+  // Class CUBE3D
+  // ***************************************************************
+
+  /// @brief 3D cube information.  
+  class CUBE3D:public CUBE3D_BASE {
+
+  public:
+    
+    // @brief Constructor.
+    CUBE3D() {};
+
+    /*!
+     *  @brief Return j'th vertex of facet ifacet.
+     *  - Facet vertices are NOT listed in cylic order.
+     */
+    int FacetVertex(const int ifacet, const int j) const
+    {
+      // For some reason, declaring this array in CUBE3D does not work.
+      // Not sure why not.
+      static constexpr CUBE_VERTEX_INDEX
+        facet_vertex[NumFacets()][NumVerticesPerFacet()] =
+        { {0, 2, 4, 6}, {0, 4, 1, 5}, {0, 1, 2, 3},
+          {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };
+      
+      return facet_vertex[ifacet][j];
+    }
+
+
+    /*!
+     *  @brief Return j'th vertex in counter-clockwise order
+     *    around facet ifacet.
+     *  - Facet vertices are in cyclic order with outward normal
+     *    (righ hand orientation).
+     */
+    int FacetVertexCCW(const int ifacet, const int j) const
+    {
+      static const int reorder_to_ccw[NumVerticesPerFacet()] =
+        { 0, 2, 3, 1 };
+      return FacetVertex(ifacet, reorder_to_ccw[j]);
+    }
+    
+  };
+
+  
   // *****************************************************************
-  // CUBE3D Output functions - Mainly for debugging
+  // CUBE3D_BASE Output functions - Mainly for debugging
   // *****************************************************************
 
   template <typename OSTREAM_TYPE>  
-  void CUBE3D::OutVertexCoord
+  void CUBE3D_BASE::OutVertexCoord
   (OSTREAM_TYPE & out, const int iv) const
   {
     out << "(";

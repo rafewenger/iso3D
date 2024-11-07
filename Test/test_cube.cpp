@@ -11,6 +11,7 @@
 #include "iso3D_error.h"
 
 using namespace ISO3D;
+using std::cerr;
 using std::cout;
 using std::endl;
   
@@ -29,7 +30,7 @@ int main(int argc, char ** argv)
     cout << endl;
   }
   catch (ERROR & error) {
-    error.Out(std::cerr);
+    error.Out(cerr);
   }
   cout << endl;
   
@@ -42,11 +43,12 @@ void output_cube(const CUBE3D & cube)
   cout << "Dimension: " << cube.Dimension() << endl;
   cout << "Number of cube vertices: " << cube.NumVertices() << endl;
   cout << "Number of cube edges: " << cube.NumEdges() << endl;
-  cout << "Number of cube facets:" << cube.NumFacets() << endl;
+  cout << endl;
 
   for (int iv = 0; iv < cube.NumVertices(); iv++) {
     cube.OutVertexIndexAndCoord(cout, "Vertex ", iv, "\n");
   }
+  cout << endl;
 
   output_facets(cube);
 }
@@ -60,6 +62,18 @@ void output_facets(const CUBE3D & cube)
          << cube.FacetSide(ifacet) << ", orthogonal direction "
          << cube.FacetOrthDir(ifacet) << ", opposite facet "
          << cube.OppositeFacet(ifacet) << "." << endl;
+
+    cout << "  Facet vertices:";
+    for (int j = 0; j < cube.NumVerticesPerFacet(); j++) {
+      cout << "  " << cube.FacetVertex(ifacet,j);
+    }
+    cout << endl;
+
+    cout << "  Facet vertices in counter-clockwise order:";
+    for (int j = 0; j < cube.NumVerticesPerFacet(); j++) {
+      cout << "  " << cube.FacetVertexCCW(ifacet,j);
+    }
+    cout << endl;    
   }
   
 }
