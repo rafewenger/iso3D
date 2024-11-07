@@ -54,14 +54,25 @@ void output_cube(const CUBE3D & cube)
 }
 
 
+void output_edges(const CUBE3D & cube)
+{
+  cout << "Number of cube edges:" << cube.NumEdges() << endl;
+  for (int iedge = 0; iedge < cube.NumEdges(); iedge++) {
+    cout << "Edge " << iedge
+         << ", direction " << cube.EdgeDirection(iedge)
+         << ", endpoints" << endl;
+  }
+}
+
 void output_facets(const CUBE3D & cube)
 {
   cout << "Number of cube facets:" << cube.NumFacets() << endl;
   for (int ifacet = 0; ifacet < cube.NumFacets(); ifacet++) {
-    cout << "Facet " << ifacet << ", side "
-         << cube.FacetSide(ifacet) << ", orthogonal direction "
-         << cube.FacetOrthDir(ifacet) << ", opposite facet "
-         << cube.OppositeFacet(ifacet) << "." << endl;
+    cout << "Facet " << ifacet
+         << ", side " << cube.FacetSide(ifacet)
+         << ", orthogonal direction " << cube.FacetOrthDir(ifacet)
+         << ", opposite facet " << cube.OppositeFacet(ifacet)
+         << "." << endl;
 
     cout << "  Facet vertices:";
     for (int j = 0; j < cube.NumVerticesPerFacet(); j++) {

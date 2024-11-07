@@ -105,6 +105,13 @@ namespace ISO3D {
     static constexpr int OppositeFacet(const int ifacet)
     { return ((ifacet + Dimension())%NumFacets()); }
 
+    /*!
+     *  @brief Return edge direction, 0, 1, or 2.
+     *  @param iedge Edge index.
+     *  @pre iedge is in range [0..11]
+     */
+    static constexpr int EdgeDirection(const int iedge)
+    { return (iedge/Dimension()); }
       
 
     // ***************************************************************
@@ -190,6 +197,38 @@ namespace ISO3D {
         { 0, 2, 3, 1 };
       return FacetVertex(ifacet, reorder_to_ccw[j]);
     }
+
+
+    /*!
+     *  @brief Return j'th endpoint of edge iedge.
+     *  @param iedge Edge index.
+     *  @pre In range [0..11].
+     *  @param j Endpoint index, 0 or 1.
+     */
+    int EdgeEndpoint(const int iedge, const int j) const
+    {
+      static const int edge_increment[Dimension()] = { 0, 1, 2 };
+      
+      const int edge_direction = EdgeDirection(iedge);
+      const int ifacet_vertex = edge_direction%NumVerticesPerFacet();
+      const int iv = FacetVertex(edge_direction, ifacet_vertex) +
+        j*edge_increment[edge_direction];
+        
+      return iv;
+    }
+
+    
+    // ***************************************************************
+    //! @name Output functions - Mainly for debugging 
+    // ***************************************************************    
+
+    /// @brief Output edge endpoints.
+    template <typename OSTREAM_TYPE>
+    void OutEdgeEndpoints(OSTREAM_TYPE & out, const int iedge) const;
+    
+    /// @brief Output facet vertices.
+    template <typename OSTREAM_TYPE>
+    void OutFacetVertices(OSTREAM_TYPE & out, const int ifacet) const;
     
   };
 
@@ -197,7 +236,7 @@ namespace ISO3D {
   // *****************************************************************
   // CUBE3D_BASE Output functions - Mainly for debugging
   // *****************************************************************
-
+  
   template <typename OSTREAM_TYPE>  
   void CUBE3D_BASE::OutVertexCoord
   (OSTREAM_TYPE & out, const int iv) const
@@ -211,6 +250,32 @@ namespace ISO3D {
     out << ")";
   }
 
+
+  // *****************************************************************
+  // CUBE3D Output functions - Mainly for debugging
+  // *****************************************************************
+
+  template <typename OSTREAM_TYPE>
+  void CUBE3D::OutEdgeEndpoints
+  (OSTREAM_TYPE & out, const int iedge) const
+  {
+    out << "(" << EdgeEndpoint(iedge,0) << ","
+        << EdgeEndpoint(iedge,1) << ")";
+  }
+
+  template <typename OSTREAM_TYPE>
+  void CUBE3D::OutFacetVertices
+  (OSTREAM_TYPE & out, const int ifacet) const
+  {
+    out << "(";
+    for (int j = 0; j < NumVerticesPerFacet(); j++) {
+      out << FacetVertex(ifacet,j);
+      if (j+1 < NumVerticesPerFacet())
+        { out << ","; }
+    }
+    out << ")";
+  }
+  
 }
 
 #endif

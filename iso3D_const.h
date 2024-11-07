@@ -32,7 +32,6 @@ namespace ISO3D {
   // Global variables.
   const int DIM3(3);
   const int NUM_VERTICES_PER_TRIANGLE(3);
-  
 }
 
 #endif
