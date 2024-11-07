@@ -11,16 +11,17 @@
 #include "iso3D_error.h"
 
 using namespace ISO3D;
+using std::cout;
+using std::endl;
+  
 
 // Forward declarations
 void output_cube(const CUBE3D & cube);
+void output_facets(const CUBE3D & cube);
 
 
 int main(int argc, char ** argv)
 {
-  using std::cout;
-  using std::endl;
-
   const CUBE3D cube;
   
   try {
@@ -38,9 +39,6 @@ int main(int argc, char ** argv)
 
 void output_cube(const CUBE3D & cube)
 {
-  using std::cout;
-  using std::endl;
-  
   cout << "Dimension: " << cube.Dimension() << endl;
   cout << "Number of cube vertices: " << cube.NumVertices() << endl;
   cout << "Number of cube edges: " << cube.NumEdges() << endl;
@@ -49,5 +47,20 @@ void output_cube(const CUBE3D & cube)
   for (int iv = 0; iv < cube.NumVertices(); iv++) {
     cube.OutVertexIndexAndCoord(cout, "Vertex ", iv, "\n");
   }
+
+  output_facets(cube);
+}
+
+
+void output_facets(const CUBE3D & cube)
+{
+  cout << "Number of cube facets:" << cube.NumFacets() << endl;
+  for (int ifacet = 0; ifacet < cube.NumFacets(); ifacet++) {
+    cout << "Facet " << ifacet << ", side "
+         << cube.FacetSide(ifacet) << ", orthogonal direction "
+         << cube.FacetOrthDir(ifacet) << ", opposite facet "
+         << cube.OppositeFacet(ifacet) << "." << endl;
+  }
+  
 }
 

@@ -52,8 +52,7 @@ namespace ISO3D {
     static constexpr int NumFacets()
     { return 6; }
 
-    /// @overload
-    /// @brief Return d'th coordinate of vertex i
+    /// @brief Return d'th coordinate of vertex iv.
     CUBE_COORD VertexCoord(const int iv, const int d) const
     {
       if (d == 0) { return iv%2; }
@@ -62,7 +61,37 @@ namespace ISO3D {
         return x % 2;
       }
     }
-    
+
+
+    /*!
+     *  @brief Return facet side, 0 or 1.
+     *  - Facet side 0 is lower/left facet.
+     *  - Facet side 1 is top/right facet.
+     *  - Facets 0,1,2, are on the lower/left side of cube.
+     *  - Facets 3,4,5, are on the top/right of cube.
+     *  @param ifacet Facet index.
+     *  @pre ifacet is in range [0..5].
+     */
+    static constexpr int FacetSide(const int ifacet)
+    { return (ifacet/Dimension()); }
+
+    /*!
+     *  @brief Return direction orthogonal to facet, 0, 1, or 2.
+     *  @param ifacet Facet index.
+     *  @pre ifacet is in range [0..5].
+     */
+    static constexpr int FacetOrthDir(const int ifacet)
+    { return (ifacet%Dimension()); }
+
+    /*!
+     *  @brief Return index of facet parallel and opposite to ifacet.
+     *  @param ifacet Facet index.
+     *  @pre ifacet is in range [0..5].
+     */
+    static constexpr int OppositeFacet(const int ifacet)
+    { return ((ifacet + Dimension())%NumFacets()); }
+
+      
 
     // ***************************************************************
     //! @name Output functions - Mainly for debugging 
