@@ -18,6 +18,7 @@ using std::endl;
 
 // Forward declarations
 void output_cube(const CUBE3D & cube);
+void output_edges(const CUBE3D & cube);
 void output_facets(const CUBE3D & cube);
 
 
@@ -42,14 +43,15 @@ void output_cube(const CUBE3D & cube)
 {
   cout << "Dimension: " << cube.Dimension() << endl;
   cout << "Number of cube vertices: " << cube.NumVertices() << endl;
-  cout << "Number of cube edges: " << cube.NumEdges() << endl;
-  cout << endl;
 
   for (int iv = 0; iv < cube.NumVertices(); iv++) {
     cube.OutVertexIndexAndCoord(cout, "Vertex ", iv, "\n");
   }
   cout << endl;
 
+  output_edges(cube);
+  cout << endl;
+  
   output_facets(cube);
 }
 
@@ -60,7 +62,8 @@ void output_edges(const CUBE3D & cube)
   for (int iedge = 0; iedge < cube.NumEdges(); iedge++) {
     cout << "Edge " << iedge
          << ", direction " << cube.EdgeDirection(iedge)
-         << ", endpoints" << endl;
+         << ", endpoints ";
+    cube.OutEdgeEndpoints(cout, "", iedge, "\n");
   }
 }
 
@@ -74,17 +77,10 @@ void output_facets(const CUBE3D & cube)
          << ", opposite facet " << cube.OppositeFacet(ifacet)
          << "." << endl;
 
-    cout << "  Facet vertices:";
-    for (int j = 0; j < cube.NumVerticesPerFacet(); j++) {
-      cout << "  " << cube.FacetVertex(ifacet,j);
-    }
-    cout << endl;
-
-    cout << "  Facet vertices in counter-clockwise order:";
-    for (int j = 0; j < cube.NumVerticesPerFacet(); j++) {
-      cout << "  " << cube.FacetVertexCCW(ifacet,j);
-    }
-    cout << endl;    
+    cube.OutFacetVertices
+      (cout, "  Facet vertices: ", ifacet, "\n");
+    cube.OutFacetVerticesCCW
+      (cout, "  Facet vertices in counter-clockwise order: ", ifacet, "\n");    
   }
   
 }
