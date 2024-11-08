@@ -25,6 +25,7 @@ bool flag_boundary(false);
 void parse_command_line(int argc, char ** argv);
 void output_grid(const GRID3D & grid);
 void output_grid_vertices(const GRID3D & grid);
+void output_grid_cubes(const GRID3D & grid);
 void output_some_prev_next_boundary_grid_vertices(const GRID3D & grid);
 void output_prev_next_grid_vertex(const GRID3D & grid, const int iv);
 void output_prev_next_grid_vertex
@@ -48,6 +49,9 @@ int main(int argc, char ** argv)
 
     if (flag_output_coord) {
       output_grid_vertices(gridA);
+      cout << endl;
+
+      output_grid_cubes(gridA);
       cout << endl;
     }
 
@@ -131,6 +135,24 @@ void output_grid_vertices(const GRID3D & grid)
 {
   for (int iv = 0; iv < grid.NumVertices(); iv++) {
     grid.OutVertexIndexAndCoord(cout, "Grid vertex ", iv, "\n");
+  }
+}
+
+
+void output_grid_cubes(const GRID3D & grid)
+{
+  CUBE_INDEX icube = 0;
+  for (int z = 0; z+1 < grid.AxisSize(2); z++) {
+    icube = z*grid.AxisIncrement(2);
+    for (int y = 0; y+1 < grid.AxisSize(1); y++) {
+      icube += y*grid.AxisIncrement(1);
+      for (int x = 0; x+1 < grid.AxisSize(0); x++) {
+        cout << "Cube " << icube
+             << " (" << x << "," << y << "," << z << ")" << endl;
+
+        icube++;
+      }
+    }
   }
 }
 
