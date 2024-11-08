@@ -111,7 +111,7 @@ namespace ISO3D {
      *  @pre iedge is in range [0..11]
      */
     static constexpr int EdgeDirection(const int iedge)
-    { return (iedge/Dimension()); }
+    { return (iedge/NumVerticesPerFacet()); }
       
 
     // ***************************************************************
@@ -163,6 +163,15 @@ namespace ISO3D {
   /// @brief 3D cube information.  
   class CUBE3D:public CUBE3D_BASE {
 
+  protected:
+
+    // *** NEW ***
+    static constexpr CUBE_VERTEX_INDEX
+    facet_vertex[NumFacets()][NumVerticesPerFacet()] =
+      { {0, 2, 4, 6}, {0, 4, 1, 5}, {0, 1, 2, 3},
+        {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };
+
+    
   public:
     
     // @brief Constructor.
@@ -174,6 +183,9 @@ namespace ISO3D {
      */
     int FacetVertex(const int ifacet, const int j) const
     {
+      return facet_vertex[ifacet][j];
+
+      /* DEBUG
       // For some reason, declaring this array in CUBE3D does not work.
       // Not sure why not.
       static constexpr CUBE_VERTEX_INDEX
@@ -182,6 +194,7 @@ namespace ISO3D {
           {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };
       
       return facet_vertex[ifacet][j];
+      */
     }
 
 
@@ -207,10 +220,10 @@ namespace ISO3D {
      */
     int EdgeEndpoint(const int iedge, const int j) const
     {
-      static const int edge_increment[Dimension()] = { 0, 1, 2 };
+      static const int edge_increment[Dimension()] = { 1, 2, 4 };
       
       const int edge_direction = EdgeDirection(iedge);
-      const int ifacet_vertex = edge_direction%NumVerticesPerFacet();
+      const int ifacet_vertex = iedge%NumVerticesPerFacet();
       const int iv = FacetVertex(edge_direction, ifacet_vertex) +
         j*edge_increment[edge_direction];
         
@@ -225,10 +238,48 @@ namespace ISO3D {
     /// @brief Output edge endpoints.
     template <typename OSTREAM_TYPE>
     void OutEdgeEndpoints(OSTREAM_TYPE & out, const int iedge) const;
-    
+
+    /*!
+     *  @overload
+     *  @brief Output edge endpoints with preceding 
+     *    and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutEdgeEndpoints
+    (OSTREAM_TYPE & out, const char * prefix, const int iedge,
+     const char * suffix) const
+    { out << prefix; OutEdgeEndpoints(out,iedge); out << suffix; }
+      
     /// @brief Output facet vertices.
     template <typename OSTREAM_TYPE>
     void OutFacetVertices(OSTREAM_TYPE & out, const int ifacet) const;
+
+    /*!
+     *  @overload
+     *  @brief Output facet vertices with preceding 
+     *    and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutFacetVertices
+    (OSTREAM_TYPE & out, const char * prefix, const int ifacet,
+     const char * suffix) const
+    { out << prefix; OutFacetVertices(out,ifacet); out << suffix; }
+
+    /// @brief Output facet vertices in counter-clockwise order.
+    /// - Facet vertices are NOT listed in cylic order.
+    template <typename OSTREAM_TYPE>
+    void OutFacetVerticesCCW(OSTREAM_TYPE & out, const int ifacet) const;
+
+    /*!
+     *  @overload
+     *  @brief Output facet vertices in counter-clockwise order
+     *    with preceding and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutFacetVerticesCCW
+    (OSTREAM_TYPE & out, const char * prefix, const int ifacet,
+     const char * suffix) const
+    { out << prefix; OutFacetVerticesCCW(out,ifacet); out << suffix; }      
     
   };
 
@@ -263,6 +314,7 @@ namespace ISO3D {
         << EdgeEndpoint(iedge,1) << ")";
   }
 
+  
   template <typename OSTREAM_TYPE>
   void CUBE3D::OutFacetVertices
   (OSTREAM_TYPE & out, const int ifacet) const
@@ -275,6 +327,20 @@ namespace ISO3D {
     }
     out << ")";
   }
+
+
+  template <typename OSTREAM_TYPE>
+  void CUBE3D::OutFacetVerticesCCW
+  (OSTREAM_TYPE & out, const int ifacet) const
+  {
+    out << "(";
+    for (int j = 0; j < NumVerticesPerFacet(); j++) {
+      out << FacetVertexCCW(ifacet,j);
+      if (j+1 < NumVerticesPerFacet())
+        { out << ","; }
+    }
+    out << ")";
+  }    
   
 }
 
