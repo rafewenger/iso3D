@@ -31,6 +31,30 @@ using namespace ISO3D;
 
 void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
 {
+  SetAxisSize(asize);
+  SetDefaultSpacing();
+}
+
+
+void GRID3D::Init()
+{
+  for (int d = 0; d < DIM3; d++) {
+    axis_size[d] = 0;
+    axis_increment[d] = 0;
+  }
+
+  num_vertices = 0;
+  num_cubes = 0;
+
+  for (int i = 0; i < CUBE3D::NumVertices(); i++)
+    { cube_vertex_increment[i] = 0; }
+
+  SetDefaultSpacing();  
+}
+
+
+void GRID3D::SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3])
+{
   CUBE3D cube;
   
   // Initialize.
@@ -41,9 +65,6 @@ void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
     axis_size[d] = asize[d];
     num_vertices = num_vertices * asize[d];
 
-    // Default spacing is 1.
-    spacing[d] = 1;
-    
     if (asize[d] > 0)
       { num_cubes = num_cubes * (asize[d]-1); }
     else
@@ -62,25 +83,13 @@ void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
     }
     cube_vertex_increment[i] = increment;
   }
-  
 }
 
 
-void GRID3D::Init()
+void GRID3D::SetDefaultSpacing()
 {
-  for (int d = 0; d < DIM3; d++) {
-    axis_size[d] = 0;
-    axis_increment[d] = 0;
-
-    // Default spacing is 1.
-    spacing[d] = 1;
-  }
-
-  num_vertices = 0;
-  num_cubes = 0;
-
-  for (int i = 0; i < CUBE3D::NumVertices(); i++)
-    { cube_vertex_increment[i] = 0; }
+  for (int d = 0; d < DIM3; d++)
+    { spacing[d] = 1.0; }
 }
 
 

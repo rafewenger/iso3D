@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <iostream>
+#include <sstream>
 
 #include "iso3D_const.h"
 #include "iso3D_cube.h"
@@ -32,12 +33,15 @@ void output_prev_next_grid_vertex
 (const GRID3D & grid, const GRID_COORD_TYPE vertex_coord[DIM3]);
 void output_cube_vertices
 (const GRID3D & grid, const GRID_COORD_TYPE cube_coord[DIM3]);
+void test_set(const AXIS_SIZE_TYPE axis_sizeA[DIM3],
+              const AXIS_SIZE_TYPE axis_sizeB[DIM3]);
 
 
 int main(int argc, char ** argv)
 {
   try {
     const AXIS_SIZE_TYPE asizeA[DIM3] = { 3, 4, 5 };
+    const AXIS_SIZE_TYPE asizeB[DIM3] = { 4, 5, 6 };
     GRID3D gridA(asizeA);
     GRID_COORD_TYPE grid_coordA123[DIM3] = { 1, 2, 3 };
 
@@ -66,7 +70,9 @@ int main(int argc, char ** argv)
 
     output_cube_vertices(gridA, grid_coordA123);
     cout << endl;
-                         
+
+    test_set(asizeA, asizeB);
+    cerr << "Passed tests." << endl;
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
@@ -257,3 +263,62 @@ void output_cube_vertices
 
   output_cube_vertices(grid, icube);
 }
+
+
+bool compare_grids(const GRID3D & gridA,
+                   const GRID3D & gridB,
+                   ERROR & error)
+{
+  std::ostringstream s_stream;
+    
+  if (gridA.NumVertices() != gridB.NumVertices()) {
+    error.AddToMessage("Unequal number of vertices.");
+    error.AddToMessage
+      ("  Grid A num vertices: ", gridA.NumVertices(), "");
+    error.AddToMessage
+      ("  Grid B num vertices: ", gridB.NumVertices(), "");
+    return false;
+  }
+
+  for (int d = 0; d < DIM3; d++) {
+    if (gridA.AxisSize(d) != gridB.AxisSize(d)) {
+      error.AddToMessage("Different axis sizes.");
+      gridA.OutAxisSize(s_stream);
+      error.AddToMessage("  Grid A axis size: ", s_stream.str(), "");
+      s_stream.clear();
+      gridB.OutAxisSize(s_stream);
+      error.AddToMessage("  Grid B axis size: ", s_stream.str(), "");
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
+void test_set(const AXIS_SIZE_TYPE axis_sizeA[DIM3],
+              const AXIS_SIZE_TYPE axis_sizeB[DIM3])
+{
+  GRID3D gridA(axis_sizeA);
+  GRID3D gridB(axis_sizeB);
+  GRID3D gridC;
+  ISO3D::PROCEDURE_ERROR error("test_set");
+  
+  gridC.SetAxisSize(axis_sizeA);
+
+  if (!compare_grids(gridA, gridC, error)) {
+    throw error;
+  }
+
+  gridC.SetAxisSize(axis_sizeB);
+  if (!compare_grids(gridB, gridC, error)) {
+    throw error;
+  }
+
+  gridB.SetAxisSize(axis_sizeA);
+  if (!compare_grids(gridA, gridB, error)) {
+    throw error;
+  }
+ 
+}
+

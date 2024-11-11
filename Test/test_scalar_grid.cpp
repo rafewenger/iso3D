@@ -30,7 +30,6 @@ int main(int argc, char ** argv)
   try {
     const AXIS_SIZE_TYPE asizeA[DIM3] = { 3, 4, 5 };
     SCALAR_GRID3D gridA(asizeA);
-    GRID_COORD_TYPE grid_coordA123[DIM3] = { 1, 2, 3 };
 
     /* NOT YET USED.
     parse_command_line(argc, argv);
