@@ -87,7 +87,6 @@ namespace ISO3D {
     
     /// @brief Copy function.
     const GRID3D & Copy(const GRID3D & right);
-    template <typename GTYPE2>
 
     /// @brief Copy operator.
     const GRID3D & operator = (const GRID3D & right)
