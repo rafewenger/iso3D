@@ -24,6 +24,8 @@
 */
 
 
+#include <bitset>
+
 #ifndef _ISO3D_TYPES_H_
 #define _ISO3D_TYPES_H_
 
@@ -41,6 +43,13 @@ namespace ISO3D {
   typedef unsigned char CUBE_VERTEX_INDEX;
   typedef unsigned char CUBE_FACET_INDEX;
   typedef unsigned char CUBE_EDGE_INDEX;
+
+  //! Bitset types
+  typedef std::bitset<16> BOUNDARY_BITS_TYPE;
+    
+  //! Non-integer types
+  typedef float SCALAR_TYPE;
+  typedef float COORD_TYPE;
 }
 
 #endif

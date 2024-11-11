@@ -77,6 +77,69 @@ void GRID3D::Init()
 }
 
 
+// Compute and return the number of vertices in grid facet.
+int GRID3D::ComputeNumVerticesInGridFacet(const int orth_dir) const
+{
+  const int d1 = (orth_dir+1)%DIM3;
+  const int d2 = (orth_dir+1)%DIM3;
+
+  return (AxisSize(d1)*AxisSize(d2)); 
+}
+
+
+// Compute and return the number of rectangles in grid facet.
+int GRID3D::ComputeNumRectanglesInGridFacet(const int orth_dir) const
+{
+  const int d1 = (orth_dir+1)%DIM3;
+  const int d2 = (orth_dir+1)%DIM3;
+
+  if ((d1 == 0) || (d2 == 0)) { return 0; }
+
+  return ((AxisSize(d1)-1)*(AxisSize(d2)-1));
+}
+
+
+// Compute the coordinates of the cube center.
+void GRID3D::ComputeCubeCenterCoord
+(const int icube, COORD_TYPE coord[DIM3]) const
+{
+  ComputeCoord(icube, coord);
+  coord[0] += 0.5;
+}
+
+
+
+// Compute bits indicating which boundary grid facet (if any)
+void GRID3D::ComputeVertexBoundaryBits
+(const int iv, BOUNDARY_BITS_TYPE & boundary_bits) const
+{
+  boundary_bits.reset();
+  VERTEX_INDEX k = iv;
+  for (int d = 0; d < DIM3; d++) {
+    const GRID_COORD c = (k % AxisSize(d));
+    k = k / AxisSize(d);
+    
+    if (c == 0) { boundary_bits.set(d); }
+    if ((c+1) >= axis_size[d]) { boundary_bits.set(d+DIM3); }
+  }
+}
+
+
+// Compute bits indicating which boundary grid facet (if any)
+void GRID3D::ComputeCubeBoundaryBits
+(const int icube, BOUNDARY_BITS_TYPE & boundary_bits) const
+{
+  boundary_bits.reset();
+  VERTEX_INDEX k = icube;
+  for (int d = 0; d < DIM3; d++) {
+    const GRID_COORD c = (k % AxisSize(d));
+    k = k / AxisSize(d);
+
+    if (c == 0) { boundary_bits.set(d); }
+    if ((c+2) >= axis_size[d]) { boundary_bits.set(d+DIM3); }
+  }
+}
+
 
 // Return true if cube invex is valid.
 bool GRID3D::CheckCubeIndex(const CUBE_INDEX icube, ERROR & error) const

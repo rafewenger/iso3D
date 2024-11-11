@@ -38,10 +38,28 @@ namespace ISO3D {
   class GRID3D {
 
   protected:
+
+    /// @brief axis_size[d] Number of grid vertices along axis d,
+    ///   i.e., axis in direction d.
     AXIS_SIZE_TYPE axis_size[DIM3];
+
+    /// @brief Add axis_increment[d] to vertex index to get next
+    ///   vertex in direction d.
     VERTEX_INDEX axis_increment[DIM3];
+
+    /// @brief cube_vertex_increment[i] Increment to add
+    ///  to cube_index to get vertex index of i'th cube vertex.
     VERTEX_INDEX cube_vertex_increment[CUBE3D::NumVertices()];
+
+    /// @brief facet_vertex_increment[i][j] Increment to add
+    ///   to cube_index to get j'th vertex of i'th cube facet.
+    VERTEX_INDEX facet_vertex_increment
+    [CUBE3D::NumFacets()][CUBE3D::NumVerticesPerFacet()];
+
+    /// @brief Total number of grid vertices.
     VERTEX_INDEX num_vertices;
+
+    /// @brief Total number of grid cubes.
     CUBE_INDEX num_cubes;
 
     /// @brief Initialize data structure.
@@ -167,6 +185,45 @@ namespace ISO3D {
      */
     template <typename CTYPE>
     VERTEX_INDEX ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const;
+
+    /*!
+     *  @brief Compute and return the number of vertices in grid facet
+     *    orthogonal to orth_dir.
+     *  @param orth_dir Direction orthogonal to facet.
+     *  @pre orth_dir is 0, 1, or 2.
+     */
+    int ComputeNumVerticesInGridFacet(const int orth_dir) const;
+
+    /*!
+     *  @brief Compute and return the number of rectangles in grid facet
+     *    orthogonal to orth_dir.
+     *  @param orth_dir Direction orthogonal to facet.
+     *  @pre orth_dir is 0, 1, or 2.
+     */
+    int ComputeNumRectanglesInGridFacet(const int orth_dir) const;
+
+    /*!
+     *  @brief Compute the coordinates of the cube center.
+     */
+    void ComputeCubeCenterCoord
+    (const int icube, COORD_TYPE coord[DIM3]) const;
+
+    /*!
+     *  @brief Compute bits indicating which boundary grid facet (if any)
+     *    contains vertex iv.
+     *  -
+     */
+    void ComputeVertexBoundaryBits
+    (const int iv, BOUNDARY_BITS_TYPE & boundary_bits) const;
+
+
+    /*!
+     *  @brief Compute bits indicating which boundary grid facet (if any)
+     *    contains cube icube.
+     *  -
+     */
+    void ComputeCubeBoundaryBits
+    (const int icube, BOUNDARY_BITS_TYPE & boundary_bits) const;
 
     //@}
     
