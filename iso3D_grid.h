@@ -45,22 +45,22 @@ namespace ISO3D {
 
     /// @brief Add axis_increment[d] to vertex index to get next
     ///   vertex in direction d.
-    VERTEX_INDEX axis_increment[DIM3];
+    VERTEX_INDEX_TYPE axis_increment[DIM3];
 
     /// @brief cube_vertex_increment[i] Increment to add
     ///  to cube_index to get vertex index of i'th cube vertex.
-    VERTEX_INDEX cube_vertex_increment[CUBE3D::NumVertices()];
+    VERTEX_INDEX_TYPE cube_vertex_increment[CUBE3D::NumVertices()];
 
     /// @brief facet_vertex_increment[i][j] Increment to add
     ///   to cube_index to get j'th vertex of i'th cube facet.
-    VERTEX_INDEX facet_vertex_increment
+    VERTEX_INDEX_TYPE facet_vertex_increment
     [CUBE3D::NumFacets()][CUBE3D::NumVerticesPerFacet()];
 
     /// @brief Total number of grid vertices.
-    VERTEX_INDEX num_vertices;
+    VERTEX_INDEX_TYPE num_vertices;
 
     /// @brief Total number of grid cubes.
-    CUBE_INDEX num_cubes;
+    CUBE_INDEX_TYPE num_cubes;
 
     /// @brief Initialize data structure.
     void Init(const AXIS_SIZE_TYPE asize[DIM3]);
@@ -119,11 +119,11 @@ namespace ISO3D {
     { return 3; }
     
     /// @brief Return number of vertices in grid.
-    inline const VERTEX_INDEX NumVertices() const
+    inline const VERTEX_INDEX_TYPE NumVertices() const
     { return num_vertices; }
 
     /// @brief Return number of cube in grid.
-    inline const VERTEX_INDEX NumCubes() const
+    inline const VERTEX_INDEX_TYPE NumCubes() const
     { return num_cubes; }
 
     /// @brief Return axis_size[d].
@@ -131,7 +131,7 @@ namespace ISO3D {
     { return axis_size[d]; }
 
     /// @brief Return axis_increment[d].
-    inline VERTEX_INDEX AxisIncrement(const int d) const
+    inline VERTEX_INDEX_TYPE AxisIncrement(const int d) const
     { return axis_increment[d]; }
 
     /*!
@@ -140,7 +140,8 @@ namespace ISO3D {
      *    i.e., does not check whether iv is on rightmost/topmost
      *    boundary of grid.
      */
-    inline VERTEX_INDEX NextVertex(const VERTEX_INDEX iv, const int d) const
+    inline VERTEX_INDEX_TYPE NextVertex
+    (const VERTEX_INDEX_TYPE iv, const int d) const
     { return iv + axis_increment[d]; }
 
     /*!
@@ -149,7 +150,8 @@ namespace ISO3D {
      *    i.e., does not check whether iv is on leftmost/bottommost
      *    boundary of grid.
      */
-    inline VERTEX_INDEX PrevVertex(const VERTEX_INDEX iv, const int d) const
+    inline VERTEX_INDEX_TYPE PrevVertex
+    (const VERTEX_INDEX_TYPE iv, const int d) const
     { return iv - axis_increment[d]; }
 
     /*!
@@ -159,8 +161,8 @@ namespace ISO3D {
      *  - Note: Does NOT check that icube is a cube index,
      *    nor that i is less than 8.
      */
-    inline VERTEX_INDEX CubeVertex
-      (const CUBE_INDEX icube, const int i) const
+    inline VERTEX_INDEX_TYPE CubeVertex
+      (const CUBE_INDEX_TYPE icube, const int i) const
     { return icube+cube_vertex_increment[i]; }
 
     //@}
@@ -184,7 +186,7 @@ namespace ISO3D {
      *  @pre 0 <= vertex_coord[d] < AxisSize(d).
      */
     template <typename CTYPE>
-    VERTEX_INDEX ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const;
+    VERTEX_INDEX_TYPE ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const;
 
     /*!
      *  @brief Compute and return the number of vertices in grid facet
@@ -268,7 +270,7 @@ namespace ISO3D {
     /*!
      *  @brief Return true if cube invex is valid.
      */
-    bool CheckCubeIndex(const CUBE_INDEX icube, ERROR & error) const;
+    bool CheckCubeIndex(const CUBE_INDEX_TYPE icube, ERROR & error) const;
 
     //@}
     
@@ -353,6 +355,22 @@ namespace ISO3D {
      const char * suffix) const
     { out << prefix; OutVertexIndexAndCoord(out,iv); out << suffix; }
 
+
+    /// @brief Output cube center coordinates.
+    template <typename OSTREAM_TYPE>
+    void OutCubeCenterCoord(OSTREAM_TYPE & out, const int icube) const;
+
+    /*!
+     *  @overload
+     *  @brief Output cube center coordinates 
+     *     with preceding and following string.
+     */    
+    template <typename OSTREAM_TYPE>
+    void OutCubeCenterCoord
+    (OSTREAM_TYPE & out, const char * prefix, const int icube,
+     const char * suffix) const
+    { out << prefix; OutCubeCenterCoord(out,icube); out << suffix; }
+    
     //@}
       
   };
@@ -378,11 +396,11 @@ namespace ISO3D {
    *  @pre 0 <= vertex_coord[d] < AxisSize(d).
    */
   template <typename CTYPE>
-  VERTEX_INDEX GRID3D::ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const
+  VERTEX_INDEX_TYPE GRID3D::ComputeVertexIndex(CTYPE vertex_coord[DIM3]) const
   {
     PROCEDURE_ERROR error("GRID3D:ComputeVertexIndex");
 
-    VERTEX_INDEX iv = 0;
+    VERTEX_INDEX_TYPE iv = 0;
     
     for (int d = 0; d < DIM3; d++) {
       if (!CheckVertexCoord(d, vertex_coord[d], error))
@@ -478,12 +496,24 @@ namespace ISO3D {
   template <typename OSTREAM_TYPE>
   void GRID3D::OutVertexCoord(OSTREAM_TYPE & out, const int iv) const
   {
-    GRID_COORD vertex_coord[DIM3];
+    GRID_COORD_TYPE vertex_coord[DIM3];
 
     ComputeCoord(iv, vertex_coord);
     OutArray(out, vertex_coord, DIM3);
   }
-  
+
+    
+  // Output cube center coordinates.
+  template <typename OSTREAM_TYPE>
+  void GRID3D::OutCubeCenterCoord
+  (OSTREAM_TYPE & out, const int icube) const
+  {
+    COORD_TYPE cube_center_coord[DIM3];
+
+    ComputeCubeCenterCoord(icube, cube_center_coord);
+    OutArray(out, cube_center_coord, DIM3);
+  }    
+
 }
 
 #endif

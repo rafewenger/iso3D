@@ -32,12 +32,12 @@
 namespace ISO3D {
 
   //! @name Grid types.
-  typedef int VERTEX_INDEX;
-  typedef VERTEX_INDEX CUBE_INDEX;
+  typedef int VERTEX_INDEX_TYPE;
+  typedef VERTEX_INDEX_TYPE CUBE_INDEX_TYPE;
   typedef int AXIS_SIZE_TYPE;
   typedef int NUMBER_TYPE;
-  typedef VERTEX_INDEX GRID_COORD;
-  typedef GRID_COORD CUBE_COORD;
+  typedef VERTEX_INDEX_TYPE GRID_COORD_TYPE;
+  typedef GRID_COORD_TYPE CUBE_COORD_TYPE;
 
   //! @name Cube face types.
   typedef unsigned char CUBE_VERTEX_INDEX;

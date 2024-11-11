@@ -52,7 +52,7 @@ void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
   }
 
   for (int i = 0; i < CUBE3D::NumVertices(); i++) {
-    VERTEX_INDEX increment = 0;
+    VERTEX_INDEX_TYPE increment = 0;
     for (int d = 0; d < Dimension(); d++) {
       increment += axis_increment[d] * cube.VertexCoord(i, d);
     }
@@ -105,6 +105,8 @@ void GRID3D::ComputeCubeCenterCoord
 {
   ComputeCoord(icube, coord);
   coord[0] += 0.5;
+  coord[1] += 0.5;
+  coord[2] += 0.5;
 }
 
 
@@ -114,9 +116,9 @@ void GRID3D::ComputeVertexBoundaryBits
 (const int iv, BOUNDARY_BITS_TYPE & boundary_bits) const
 {
   boundary_bits.reset();
-  VERTEX_INDEX k = iv;
+  VERTEX_INDEX_TYPE k = iv;
   for (int d = 0; d < DIM3; d++) {
-    const GRID_COORD c = (k % AxisSize(d));
+    const GRID_COORD_TYPE c = (k % AxisSize(d));
     k = k / AxisSize(d);
     
     if (c == 0) { boundary_bits.set(d); }
@@ -130,9 +132,9 @@ void GRID3D::ComputeCubeBoundaryBits
 (const int icube, BOUNDARY_BITS_TYPE & boundary_bits) const
 {
   boundary_bits.reset();
-  VERTEX_INDEX k = icube;
+  VERTEX_INDEX_TYPE k = icube;
   for (int d = 0; d < DIM3; d++) {
-    const GRID_COORD c = (k % AxisSize(d));
+    const GRID_COORD_TYPE c = (k % AxisSize(d));
     k = k / AxisSize(d);
 
     if (c == 0) { boundary_bits.set(d); }
@@ -142,9 +144,9 @@ void GRID3D::ComputeCubeBoundaryBits
 
 
 // Return true if cube invex is valid.
-bool GRID3D::CheckCubeIndex(const CUBE_INDEX icube, ERROR & error) const
+bool GRID3D::CheckCubeIndex(const CUBE_INDEX_TYPE icube, ERROR & error) const
 {
-  CUBE_COORD cube_coord[DIM3];
+  CUBE_COORD_TYPE cube_coord[DIM3];
 
   ComputeCoord(icube, cube_coord);
   return CheckCubeCoord(cube_coord, error);

@@ -29,9 +29,9 @@ void output_grid_cubes(const GRID3D & grid);
 void output_some_prev_next_boundary_grid_vertices(const GRID3D & grid);
 void output_prev_next_grid_vertex(const GRID3D & grid, const int iv);
 void output_prev_next_grid_vertex
-(const GRID3D & grid, const GRID_COORD vertex_coord[DIM3]);
+(const GRID3D & grid, const GRID_COORD_TYPE vertex_coord[DIM3]);
 void output_cube_vertices
-(const GRID3D & grid, const GRID_COORD cube_coord[DIM3]);
+(const GRID3D & grid, const GRID_COORD_TYPE cube_coord[DIM3]);
 
 
 int main(int argc, char ** argv)
@@ -39,7 +39,7 @@ int main(int argc, char ** argv)
   try {
     const AXIS_SIZE_TYPE asizeA[DIM3] = { 3, 4, 5 };
     GRID3D gridA(asizeA);
-    GRID_COORD grid_coordA123[DIM3] = { 1, 2, 3 };
+    GRID_COORD_TYPE grid_coordA123[DIM3] = { 1, 2, 3 };
 
     parse_command_line(argc, argv);
     
@@ -141,15 +141,16 @@ void output_grid_vertices(const GRID3D & grid)
 
 void output_grid_cubes(const GRID3D & grid)
 {
-  CUBE_INDEX icube = 0;
+  CUBE_INDEX_TYPE icube = 0;
   for (int z = 0; z+1 < grid.AxisSize(2); z++) {
     icube = z*grid.AxisIncrement(2);
     for (int y = 0; y+1 < grid.AxisSize(1); y++) {
       icube += y*grid.AxisIncrement(1);
       for (int x = 0; x+1 < grid.AxisSize(0); x++) {
         cout << "Cube " << icube
-             << " (" << x << "," << y << "," << z << ")" << endl;
-
+             << " (" << x << "," << y << "," << z << ")";
+        grid.OutCubeCenterCoord
+          (cout, ".  Cube center: ", icube, ".\n");
         icube++;
       }
     }
@@ -159,7 +160,7 @@ void output_grid_cubes(const GRID3D & grid)
 
 void output_prev_next_grid_vertex(const GRID3D & grid, const int iv)
 {
-  GRID_COORD vertex_coord[DIM3];
+  GRID_COORD_TYPE vertex_coord[DIM3];
   PROCEDURE_ERROR error("output_prev_next_grid_vertex");
 
   if ((iv < 0) || (iv >= grid.NumVertices())) {
@@ -175,7 +176,7 @@ void output_prev_next_grid_vertex(const GRID3D & grid, const int iv)
       cout << "  On lower facet orthogonal to " << d << ".";
     }
     else {
-      const VERTEX_INDEX iv_prev = grid.PrevVertex(iv, d);
+      const VERTEX_INDEX_TYPE iv_prev = grid.PrevVertex(iv, d);
       grid.OutVertexIndexAndCoord(cout, "  Prev vertex ", iv_prev, ".");
     }
 
@@ -183,7 +184,7 @@ void output_prev_next_grid_vertex(const GRID3D & grid, const int iv)
       cout << "  On upper facet orthogonal to " << d << ".";
     }
     else {
-      const VERTEX_INDEX iv_next = grid.NextVertex(iv, d);
+      const VERTEX_INDEX_TYPE iv_next = grid.NextVertex(iv, d);
       grid.OutVertexIndexAndCoord(cout, "  Next vertex ", iv_next, ".");
     }
     cout << endl;
@@ -192,9 +193,9 @@ void output_prev_next_grid_vertex(const GRID3D & grid, const int iv)
 
 
 void output_prev_next_grid_vertex
-(const GRID3D & grid, const GRID_COORD vertex_coord[DIM3])
+(const GRID3D & grid, const GRID_COORD_TYPE vertex_coord[DIM3])
 {
-  const VERTEX_INDEX iv = grid.ComputeVertexIndex(vertex_coord);
+  const VERTEX_INDEX_TYPE iv = grid.ComputeVertexIndex(vertex_coord);
   output_prev_next_grid_vertex(grid, iv);
 }
   
@@ -218,16 +219,16 @@ void output_cube_vertices(const GRID3D & grid, const int icube)
   
   grid.OutVertexIndexAndCoord(cout, "Cube ", icube, ". Vertices: \n");
   for (int j = 0; j < CUBE3D::NumVertices(); j++) {
-    const VERTEX_INDEX jv = grid.CubeVertex(icube, j);
+    const VERTEX_INDEX_TYPE jv = grid.CubeVertex(icube, j);
     grid.OutVertexIndexAndCoord(cout, "  Vertex ", jv, "\n");
   }
 }
 
 
 void output_cube_vertices
-  (const GRID3D & grid, const GRID_COORD cube_coord[DIM3])
+  (const GRID3D & grid, const GRID_COORD_TYPE cube_coord[DIM3])
 {
-  const CUBE_INDEX icube = grid.ComputeVertexIndex(cube_coord);
+  const CUBE_INDEX_TYPE icube = grid.ComputeVertexIndex(cube_coord);
 
   output_cube_vertices(grid, icube);
 }

@@ -67,7 +67,7 @@ namespace ISO3D {
     { return 4; }
     
     /// @brief Return d'th coordinate of vertex iv.
-    CUBE_COORD VertexCoord(const int iv, const int d) const
+    CUBE_COORD_TYPE VertexCoord(const int iv, const int d) const
     {
       if (d == 0) { return iv%2; }
       else {
