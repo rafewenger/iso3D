@@ -119,6 +119,20 @@ void parse_command_line(int argc, char ** argv)
   }
 }
 
+void output_grid_facet_info
+(const GRID3D & grid, const int ifacet)
+{
+  const int num_vertices_in_grid_facet =
+    grid.ComputeNumVerticesInGridFacet(ifacet);
+  const int num_cubes_supported_by_grid_facet =
+    grid.ComputeNumCubesSupportedByGridFacet(ifacet);
+
+  cout << "Facet " << ifacet
+       << ". Number of vertices: " << num_vertices_in_grid_facet
+       << ". Number of supported cubes: " << num_cubes_supported_by_grid_facet
+       << endl;
+}
+
 
 void output_grid(const GRID3D & grid)
 {
@@ -126,6 +140,9 @@ void output_grid(const GRID3D & grid)
   grid.OutAxisSize(cout, "Axis size: ", "\n");
   cout << "Number of grid vertices: " << grid.NumVertices() << endl;
   cout << "Number of grid cubes: " << grid.NumCubes() << endl;
+  output_grid_facet_info(grid, 0);
+  output_grid_facet_info(grid, 1);
+  output_grid_facet_info(grid, 2);
   grid.OutAxisIncrement(cout, "Axis increment: ", "\n");
   grid.OutCubeVertexIncrement(cout, "Cube vertex increment: ", "\n");
 }

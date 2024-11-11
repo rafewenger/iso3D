@@ -28,6 +28,7 @@
 
 using namespace ISO3D;
 
+
 void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
 {
   CUBE3D cube;
@@ -81,20 +82,21 @@ void GRID3D::Init()
 int GRID3D::ComputeNumVerticesInGridFacet(const int orth_dir) const
 {
   const int d1 = (orth_dir+1)%DIM3;
-  const int d2 = (orth_dir+1)%DIM3;
+  const int d2 = (orth_dir+2)%DIM3;
 
   return (AxisSize(d1)*AxisSize(d2)); 
 }
 
 
-// Compute and return the number of rectangles in grid facet.
-int GRID3D::ComputeNumRectanglesInGridFacet(const int orth_dir) const
+// Compute and return the number of cubes supported by a grid facet.
+int GRID3D::ComputeNumCubesSupportedByGridFacet(const int orth_dir) const
 {
   const int d1 = (orth_dir+1)%DIM3;
-  const int d2 = (orth_dir+1)%DIM3;
+  const int d2 = (orth_dir+2)%DIM3;
 
-  if ((d1 == 0) || (d2 == 0)) { return 0; }
-
+  if ((AxisSize(d1) == 0) || (AxisSize(d2) == 0))
+    { return 0; }
+  
   return ((AxisSize(d1)-1)*(AxisSize(d2)-1));
 }
 

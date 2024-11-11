@@ -197,12 +197,16 @@ namespace ISO3D {
     int ComputeNumVerticesInGridFacet(const int orth_dir) const;
 
     /*!
-     *  @brief Compute and return the number of rectangles in grid facet
-     *    orthogonal to orth_dir.
+     *  @brief Compute and return the number of cubes supported
+     *    by the grid facet orthogonal to orth_dir.
+     *  - Equivalent to the number of cubes that intersect 
+     *    the grid facet in a cube facet.
+     *  - Also equivalent to the number of squares
+     *    in a grid facet orthogonal to orth_dir.
      *  @param orth_dir Direction orthogonal to facet.
      *  @pre orth_dir is 0, 1, or 2.
      */
-    int ComputeNumRectanglesInGridFacet(const int orth_dir) const;
+    int ComputeNumCubesSupportedByGridFacet(const int orth_dir) const;
 
     /*!
      *  @brief Compute the coordinates of the cube center.
@@ -217,7 +221,6 @@ namespace ISO3D {
      */
     void ComputeVertexBoundaryBits
     (const int iv, BOUNDARY_BITS_TYPE & boundary_bits) const;
-
 
     /*!
      *  @brief Compute bits indicating which boundary grid facet (if any)
