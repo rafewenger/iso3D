@@ -117,6 +117,11 @@ namespace ISO3D {
     /// @brief Return grid dimension. (Always 3).
     constexpr int Dimension() const
     { return 3; }
+
+    /// @brief Return number of grid facets. (Always 6).
+    /// - Equals number of cube facets.
+    constexpr int NumFacets() const
+    { return CUBE3D::NumFacets(); }
     
     /// @brief Return number of vertices in grid.
     inline const VERTEX_INDEX_TYPE NumVertices() const
@@ -373,7 +378,50 @@ namespace ISO3D {
     (OSTREAM_TYPE & out, const char * prefix, const int icube,
      const char * suffix) const
     { out << prefix; OutCubeCenterCoord(out,icube); out << suffix; }
+
+    /// @brief Output boundary bits.
+    /// - Output bits from left to right, with boundary_bits[0]
+    ///   being the leftmost bit.
+    template <typename OSTREAM_TYPE>
+    void OutBoundaryBits
+    (OSTREAM_TYPE & out, const BOUNDARY_BITS_TYPE & boundary_bits) const;
+
+    /// @brief Output vertex boundary bits.
+    /// - Output bits from left to right, with bit 0
+    ///   being the leftmost bit.    
+    template <typename OSTREAM_TYPE>
+    void OutVertexBoundaryBits
+    (OSTREAM_TYPE & out, const int iv) const;
+
+    /*!
+     *  @overload
+     *  @brief Output vertex boundary bits
+     *    with preceding and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutVertexBoundaryBits
+    (OSTREAM_TYPE & out, const char * prefix, const int iv,
+     const char * suffix) const
+    { out << prefix; OutVertexBoundaryBits(out, iv); out << suffix; }
     
+    /// @brief Output cube boundary bits
+    /// - Output bits from left to right, with bit 0
+    ///   being the leftmost bit.    
+    template <typename OSTREAM_TYPE>
+    void OutCubeBoundaryBits
+    (OSTREAM_TYPE & out, const int icube) const;
+
+    /*!
+     *  @overload
+     *  @brief Output cube boundary bits
+     *    with preceding and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutCubeBoundaryBits
+    (OSTREAM_TYPE & out, const char * prefix, const int icube,
+     const char * suffix) const
+    { out << prefix; OutCubeBoundaryBits(out, icube); out << suffix; }
+      
     //@}
       
   };
@@ -517,6 +565,40 @@ namespace ISO3D {
     OutArray(out, cube_center_coord, DIM3);
   }    
 
+
+  // Output boundary bits.
+  template <typename OSTREAM_TYPE>
+  void GRID3D::OutBoundaryBits
+  (OSTREAM_TYPE & out, const BOUNDARY_BITS_TYPE & boundary_bit) const
+  {
+    out << "(";
+    for (int ifacet = 0; ifacet < NumFacets(); ifacet++)
+      { out << boundary_bit[ifacet]; }
+    out << ")";
+  }
+
+
+  // Output vertex boundary bits.
+  template <typename OSTREAM_TYPE>
+  void GRID3D::OutVertexBoundaryBits
+  (OSTREAM_TYPE & out, const int iv) const
+  {
+    BOUNDARY_BITS_TYPE vertex_boundary_bit;
+    ComputeVertexBoundaryBits(iv, vertex_boundary_bit);
+    OutBoundaryBits(out, vertex_boundary_bit);
+  }
+
+    
+  // Output cube boundary bits.
+  template <typename OSTREAM_TYPE>
+  void GRID3D::OutCubeBoundaryBits
+  (OSTREAM_TYPE & out, const int icube) const
+  {
+    BOUNDARY_BITS_TYPE cube_boundary_bit;
+    ComputeCubeBoundaryBits(icube, cube_boundary_bit);
+    OutBoundaryBits(out, cube_boundary_bit);
+  }    
+    
 }
 
 #endif

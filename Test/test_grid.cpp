@@ -18,7 +18,8 @@ using std::cout;
 using std::endl;
 
 // Global variables
-bool flag_output_coord(false);
+bool flag_list_vertices(false);
+bool flag_list_cubes(false);
 bool flag_boundary(false);
 
 // Forward declarations
@@ -47,10 +48,12 @@ int main(int argc, char ** argv)
     output_grid(gridA);
     cout << endl;
 
-    if (flag_output_coord) {
+    if (flag_list_vertices) {
       output_grid_vertices(gridA);
       cout << endl;
+    }
 
+    if (flag_list_cubes) {
       output_grid_cubes(gridA);
       cout << endl;
     }
@@ -77,7 +80,7 @@ int main(int argc, char ** argv)
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: test_grid -coord -boundary" << endl;
+  out << "Usage: test_grid -listv -listc -boundary" << endl;
 }
 
 
@@ -90,7 +93,8 @@ void usage_error()
 void help_msg()
 {
   usage_msg(cout);
-  cout << "  -coord: Print coordinates of each vertex." << endl;
+  cout << "  -listv: Print coordinates of each vertex." << endl;
+  cout << "  -listc: Print coordinates of each cube." << endl;
   cout << "  -boundary: Print prev/next of some vertices on the grid boundary."
        << endl;
   exit(0);
@@ -101,8 +105,11 @@ void parse_command_line(int argc, char ** argv)
   int iarg = 1;
   while (iarg < argc) {
     std::string s = argv[iarg];
-    if (s == "-coord") {
-      flag_output_coord = true;
+    if (s == "-listv") {
+      flag_list_vertices = true;
+    }
+    else if (s == "-listc") {
+      flag_list_cubes = true;
     }
     else if (s == "-boundary") {
       flag_boundary = true;
@@ -151,7 +158,8 @@ void output_grid(const GRID3D & grid)
 void output_grid_vertices(const GRID3D & grid)
 {
   for (int iv = 0; iv < grid.NumVertices(); iv++) {
-    grid.OutVertexIndexAndCoord(cout, "Grid vertex ", iv, "\n");
+    grid.OutVertexIndexAndCoord(cout, "Grid vertex ", iv, ".");
+    grid.OutVertexBoundaryBits(cout, "  Boundary bits: ", iv, ".\n");
   }
 }
 
@@ -167,7 +175,8 @@ void output_grid_cubes(const GRID3D & grid)
         cout << "Cube " << icube
              << " (" << x << "," << y << "," << z << ")";
         grid.OutCubeCenterCoord
-          (cout, ".  Cube center: ", icube, ".\n");
+          (cout, ".  Cube center: ", icube, ".");
+        grid.OutCubeBoundaryBits(cout, "  Boundary bits: ", icube, ".\n");
         icube++;
       }
     }

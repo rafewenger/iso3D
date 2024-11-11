@@ -115,32 +115,32 @@ void GRID3D::ComputeCubeCenterCoord
 
 // Compute bits indicating which boundary grid facet (if any)
 void GRID3D::ComputeVertexBoundaryBits
-(const int iv, BOUNDARY_BITS_TYPE & boundary_bits) const
+(const int iv, BOUNDARY_BITS_TYPE & boundary_bit) const
 {
-  boundary_bits.reset();
+  boundary_bit.reset();
   VERTEX_INDEX_TYPE k = iv;
   for (int d = 0; d < DIM3; d++) {
     const GRID_COORD_TYPE c = (k % AxisSize(d));
     k = k / AxisSize(d);
     
-    if (c == 0) { boundary_bits.set(d); }
-    if ((c+1) >= axis_size[d]) { boundary_bits.set(d+DIM3); }
+    if (c == 0) { boundary_bit.set(d); }
+    if ((c+1) >= axis_size[d]) { boundary_bit.set(d+DIM3); }
   }
 }
 
 
 // Compute bits indicating which boundary grid facet (if any)
 void GRID3D::ComputeCubeBoundaryBits
-(const int icube, BOUNDARY_BITS_TYPE & boundary_bits) const
+(const int icube, BOUNDARY_BITS_TYPE & boundary_bit) const
 {
-  boundary_bits.reset();
+  boundary_bit.reset();
   VERTEX_INDEX_TYPE k = icube;
   for (int d = 0; d < DIM3; d++) {
     const GRID_COORD_TYPE c = (k % AxisSize(d));
     k = k / AxisSize(d);
 
-    if (c == 0) { boundary_bits.set(d); }
-    if ((c+2) >= axis_size[d]) { boundary_bits.set(d+DIM3); }
+    if (c == 0) { boundary_bit.set(d); }
+    if ((c+2) >= axis_size[d]) { boundary_bit.set(d+DIM3); }
   }
 }
 
