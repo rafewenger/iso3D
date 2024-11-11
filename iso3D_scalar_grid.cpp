@@ -41,12 +41,6 @@ void SCALAR_GRID3D_BASE::Init()
 void SCALAR_GRID3D::Init()
 {
   if (this->NumVertices() > 0) {
-
-    // *** DEBUG ***
-    using namespace std;
-    cerr << "Allocating scalar array to size "
-         << this->NumVertices() << endl;
-    
     scalar = new SCALAR_TYPE[this->NumVertices()];
   }
 }
@@ -58,4 +52,23 @@ void SCALAR_GRID3D::FreeAll()
     delete [] scalar;
     scalar = NULL;
   }
+}
+
+
+// Set axis size.
+// - Reallocate scalar[] with change in number of vertices.
+void SCALAR_GRID3D::SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3])
+{
+  const NUMBER_TYPE old_num_vertices = this->NumVertices();
+  
+  GRID3D::SetAxisSize(asize);
+
+  if (old_num_vertices != this->NumVertices()) {
+    FreeAll();
+
+    if (this->NumVertices() > 0) {
+      scalar = new SCALAR_TYPE[this->NumVertices()];
+    }
+  }
+  
 }

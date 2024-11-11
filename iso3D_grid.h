@@ -102,7 +102,7 @@ namespace ISO3D {
     //@{
 
     /// @brief Set axis size.
-    void SetAxisSize(const AXIS_SIZE_TYPE axis_size[DIM3]);
+    void SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3]);
 
     /// @brief Set default spacing (1.0,1.0, 1.0).
     void SetDefaultSpacing();

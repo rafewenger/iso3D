@@ -107,7 +107,7 @@ namespace ISO3D {
 
     /// @brief Set axis size.
     /// - Reallocate scalar[] with change in number of vertices.
-    void SetAxisSize(const AXIS_SIZE_TYPE axis_size[DIM3]);
+    void SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3]);
 
   };  
 
