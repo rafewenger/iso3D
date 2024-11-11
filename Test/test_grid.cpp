@@ -5,7 +5,6 @@
 
 #include <cstddef>
 #include <iostream>
-#include <vector>
 
 #include "iso3D_const.h"
 #include "iso3D_cube.h"
@@ -169,9 +168,8 @@ void output_grid_cubes(const GRID3D & grid)
 {
   CUBE_INDEX_TYPE icube = 0;
   for (int z = 0; z+1 < grid.AxisSize(2); z++) {
-    icube = z*grid.AxisIncrement(2);
     for (int y = 0; y+1 < grid.AxisSize(1); y++) {
-      icube += y*grid.AxisIncrement(1);
+      icube = z*grid.AxisIncrement(2) + y*grid.AxisIncrement(1);
       for (int x = 0; x+1 < grid.AxisSize(0); x++) {
         cout << "Cube " << icube
              << " (" << x << "," << y << "," << z << ")";
