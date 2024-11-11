@@ -145,6 +145,7 @@ void output_grid(const GRID3D & grid)
 {
   cout << "Dimension: " << grid.Dimension() << endl;
   grid.OutAxisSize(cout, "Axis size: ", "\n");
+  grid.OutSpacing(cout, "Spacing: ", "\n");
   cout << "Number of grid vertices: " << grid.NumVertices() << endl;
   cout << "Number of grid cubes: " << grid.NumCubes() << endl;
   output_grid_facet_info(grid, 0);

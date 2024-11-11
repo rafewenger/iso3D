@@ -40,11 +40,14 @@ void GRID3D::Init(const AXIS_SIZE_TYPE asize[DIM3])
   for (int d = 0; d < DIM3; d++) {
     axis_size[d] = asize[d];
     num_vertices = num_vertices * asize[d];
+
+    // Default spacing is 1.
+    spacing[d] = 1;
     
     if (asize[d] > 0)
       { num_cubes = num_cubes * (asize[d]-1); }
     else
-      { num_cubes = 0; }
+      { num_cubes = 0; }    
   }
 
   axis_increment[0] = 1;
@@ -68,6 +71,9 @@ void GRID3D::Init()
   for (int d = 0; d < DIM3; d++) {
     axis_size[d] = 0;
     axis_increment[d] = 0;
+
+    // Default spacing is 1.
+    spacing[d] = 1;
   }
 
   num_vertices = 0;

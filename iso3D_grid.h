@@ -48,7 +48,7 @@ namespace ISO3D {
     VERTEX_INDEX_TYPE axis_increment[DIM3];
 
     /// @brief cube_vertex_increment[i] Increment to add
-    ///  to cube_index to get vertex index of i'th cube vertex.
+    ///   to cube_index to get vertex index of i'th cube vertex.
     VERTEX_INDEX_TYPE cube_vertex_increment[CUBE3D::NumVertices()];
 
     /// @brief facet_vertex_increment[i][j] Increment to add
@@ -56,6 +56,9 @@ namespace ISO3D {
     VERTEX_INDEX_TYPE facet_vertex_increment
     [CUBE3D::NumFacets()][CUBE3D::NumVerticesPerFacet()];
 
+    /// @brief spacing[d] Length of single grid edge along axis d.
+    COORD_TYPE spacing[DIM3];
+    
     /// @brief Total number of grid vertices.
     VERTEX_INDEX_TYPE num_vertices;
 
@@ -102,6 +105,19 @@ namespace ISO3D {
     /// @brief Set axis size.
     void SetAxisSize(const AXIS_SIZE_TYPE axis_size[DIM3]);
 
+
+    /// @brief Set spacing.
+    void SetSpacing(const int d, COORD_TYPE spacing_d)
+    { spacing[d] = spacing_d; }
+
+    /*!
+     *  @overload
+     *  @brief Set spacing. (All 3 axes.)
+     *  - Version setting spacing along all 3 axes.
+     */
+    template <typename CTYPE>
+    void SetSpacing(const CTYPE _spacing[DIM3]);
+    
     /// @brief Copy axis size from gridB.
     void CopyAxisSize(const GRID3D & gridB);
 
@@ -170,6 +186,10 @@ namespace ISO3D {
       (const CUBE_INDEX_TYPE icube, const int i) const
     { return icube+cube_vertex_increment[i]; }
 
+    /// @brief Return length of single grid edge along axis d.
+    inline COORD_TYPE Spacing(const int d) const
+    { return spacing[d]; }
+    
     //@}
     
 
@@ -333,6 +353,21 @@ namespace ISO3D {
     void OutCubeVertexIncrement(OSTREAM_TYPE & out) const
     { OutArray(out, cube_vertex_increment, CUBE3D::NumVertices()); }
 
+    /// @brief Output spacing.
+    /// - spacing[d] Length of single grid edge along axis d.
+    template <typename OSTREAM_TYPE>
+    void OutSpacing(OSTREAM_TYPE & out) const
+    { OutArray(out, spacing, DIM3); }
+
+    /*!
+     *  @overload
+     *  @brief Output spacing with preceding and following string.
+     */
+    template <typename OSTREAM_TYPE>
+    void OutSpacing
+    (OSTREAM_TYPE & out, const char * prefix, const char * suffix) const      
+    { out << prefix; OutSpacing(out); out << suffix; }
+      
     /*!
      *  @overload
      *  @brief Output cube vertex increment with preceding 
@@ -431,6 +466,16 @@ namespace ISO3D {
   // GRID3D Member functions
   // *****************************************************************  
 
+  // Set spacing. (All 3 axes.)
+  template <typename CTYPE>
+  void GRID3D::SetSpacing(const CTYPE _spacing[DIM3])
+  {
+    spacing[0] = _spacing[0];
+    spacing[1] = _spacing[1];
+    spacing[2] = _spacing[2];
+  }
+  
+  
   template <typename CTYPE>
   void GRID3D::ComputeCoord(const int iv, CTYPE vertex_coord[DIM3]) const
   {
