@@ -35,8 +35,10 @@ int main(int argc, char ** argv)
     
     nrrd_in.ReadScalarGrid(input_filename, scalar_grid, error);
 
+    if (nrrd_in.ReadFailed())
+      { throw error; }
+      
     output_grid_info(scalar_grid);
-
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
