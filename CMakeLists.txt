@@ -31,7 +31,7 @@ ADD_COMPILE_OPTIONS(-Wall -Wno-unused-function)
 SET(CMAKE_CPP_FLAGS "-std=c++17")
 SET(CMAKE_CPP_FLAGS_RELEASE "-O3")
 
-# No executable yet
-# ADD_EXECUTABLE()
+ADD_EXECUTABLE(iso3D_nrrd_info iso3D_nrrd_info.cpp
+  iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp iso3D_error.cpp)
 
 ADD_CUSTOM_TARGET(doc COMMAND doxygen iso3D_doxygen.config)

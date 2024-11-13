@@ -107,7 +107,14 @@ namespace ISO3D {
 
     /// @brief Set axis size.
     /// - Reallocate scalar[] with change in number of vertices.
-    void SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3]);
+    template <typename ATYPE>
+    void SetAxisSize(const ATYPE asize[]);
+
+    /// @brief Return pointer to array scalar[] storing scalar values.
+    SCALAR_TYPE * ScalarPtr() { return(scalar); };
+
+    /// @brief Return const pointer to C array scalar[].
+    const SCALAR_TYPE * ScalarPtrConst() const { return(scalar); };
 
   };  
 
@@ -134,6 +141,28 @@ namespace ISO3D {
         out << "\n";
       }
       out << "\n";
+    }
+  }
+
+  
+  // *****************************************************************
+  // SCALAR_GRID3D member functions
+  // *****************************************************************
+
+  // Set axis size.
+  template <typename ATYPE>
+  void SCALAR_GRID3D::SetAxisSize(const ATYPE asize[])
+  {
+    const NUMBER_TYPE old_num_vertices = this->NumVertices();
+  
+    GRID3D::SetAxisSize(asize);
+
+    if (old_num_vertices != this->NumVertices()) {
+      FreeAll();
+
+      if (this->NumVertices() > 0) {
+        scalar = new SCALAR_TYPE[this->NumVertices()];
+      }
     }
   }
 

@@ -55,6 +55,7 @@ void SCALAR_GRID3D::FreeAll()
 }
 
 
+/* OBSOLETE
 // Set axis size.
 // - Reallocate scalar[] with change in number of vertices.
 void SCALAR_GRID3D::SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3])
@@ -72,3 +73,4 @@ void SCALAR_GRID3D::SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3])
   }
   
 }
+*/

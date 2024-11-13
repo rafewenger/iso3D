@@ -26,6 +26,7 @@
 #ifndef _ISO3D_ERROR_H_
 #define _ISO3D_ERROR_H_
 
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -193,6 +194,27 @@ namespace ISO3D {
     { AddProcNameToMessage(proc_name); }
   };
 
+
+  /*!
+   *  @brief Return false and set error message if C++ STL vector size
+   *    is not equal to expected size.
+   */
+  template <typename T>
+  bool check_array_size
+  (const std::vector<T> & a, const std::size_t expected_size,
+   const char * array_name, ERROR & error)
+  {
+    if (a.size() != expected_size) {
+      error.AddToMessage
+        ("Error. Incorrect sizeof aarry ", array_name, ".");
+      error.AddToMessage("  Array size: ", a.size());
+      error.AddToMessage("  Expected array size: ", expected_size);
+      return false;
+    }
+
+    return true;
+  }
+  
 }
 
 #endif

@@ -53,7 +53,7 @@ void GRID3D::Init()
 }
 
 
-void GRID3D::SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3])
+void GRID3D::SetAll()
 {
   CUBE3D cube;
   
@@ -62,18 +62,17 @@ void GRID3D::SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3])
   num_cubes = 1;
   
   for (int d = 0; d < DIM3; d++) {
-    axis_size[d] = asize[d];
-    num_vertices = num_vertices * asize[d];
+    num_vertices = num_vertices * AxisSize(d);
 
-    if (asize[d] > 0)
-      { num_cubes = num_cubes * (asize[d]-1); }
+    if (AxisSize(d) > 0)
+      { num_cubes = num_cubes * (AxisSize(d)-1); }
     else
       { num_cubes = 0; }    
   }
 
   axis_increment[0] = 1;
   for (int d = 1; d < DIM3; d++) {
-    axis_increment[d] = axis_increment[d-1]*asize[d-1];
+    axis_increment[d] = axis_increment[d-1]*AxisSize(d-1);
   }
 
   for (int i = 0; i < CUBE3D::NumVertices(); i++) {

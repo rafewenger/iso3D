@@ -71,6 +71,10 @@ namespace ISO3D {
     /// @overload
     /// @brief Initialize data structure with axis size [0,0,0].
     void Init();
+
+    /// @brief Set all arrays based on axis size.
+    void SetAll();
+    
     
   public:
     /// @brief Constructor.
@@ -102,7 +106,9 @@ namespace ISO3D {
     //@{
 
     /// @brief Set axis size.
-    void SetAxisSize(const AXIS_SIZE_TYPE asize[DIM3]);
+    /// - Calls SetAll() after axis size is set.
+    template <typename ATYPE>
+    void SetAxisSize(const ATYPE asize[]);
 
     /// @brief Set default spacing (1.0,1.0, 1.0).
     void SetDefaultSpacing();
@@ -151,6 +157,11 @@ namespace ISO3D {
     /// @brief Return axis_size[d].
     inline int AxisSize(const int d) const
     { return axis_size[d]; }
+
+    /// @overload
+    /// @brief Return array axis_size[].
+    inline const AXIS_SIZE_TYPE * AxisSize() const
+    { return axis_size; }
 
     /// @brief Return axis_increment[d].
     inline VERTEX_INDEX_TYPE AxisIncrement(const int d) const
@@ -466,6 +477,17 @@ namespace ISO3D {
   // *****************************************************************
   // GRID3D Member functions
   // *****************************************************************  
+
+  // Set axis size.
+  template <typename ATYPE>
+  void GRID3D::SetAxisSize(const ATYPE asize[])
+  {
+    for (int d = 0; d < DIM3; d++)
+      { axis_size[d] = asize[d]; }
+
+    SetAll();
+  }
+  
 
   // Set spacing. (All 3 axes.)
   template <typename CTYPE>
