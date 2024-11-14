@@ -90,6 +90,14 @@ namespace ISO3D {
     /*!
      *  @overload
      *  @brief Specialization of template function _convert2string.
+     *  - Specialization for value of type char *.
+     */
+    std::string _convert2string(char * s)
+    { return std::string(s); }    
+
+    /*!
+     *  @overload
+     *  @brief Specialization of template function _convert2string.
      *  - Specialization for value of type bool.
      *  - Function returns str_true or str_false.
      */
