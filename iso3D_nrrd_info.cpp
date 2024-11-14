@@ -18,10 +18,15 @@ using std::endl;
 
 // Global variables
 char * input_filename;
+bool flag_out_scalar(false);
+
+// Maximum number of scalar values allowed for output.
+const int MAX_NUM_SCALAR_OUTPUT(1000);
 
 // Forward declarations
 void parse_command_line(int argc, char ** argv);
 void output_grid_info(const GRID3D & grid);
+void output_scalar_values(const SCALAR_GRID3D_BASE & grid);
 
 
 int main(int argc, char ** argv)
@@ -39,6 +44,16 @@ int main(int argc, char ** argv)
       { throw error; }
       
     output_grid_info(scalar_grid);
+
+    if (flag_out_scalar) {
+      if (scalar_grid.NumVertices() <= MAX_NUM_SCALAR_OUTPUT)
+        { output_scalar_values(scalar_grid); }
+      else {
+        cerr << endl;
+        cerr << "*** Too many (" << "> " << MAX_NUM_SCALAR_OUTPUT
+             << ") scalar values to output." << endl;
+      }
+    }
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
@@ -63,13 +78,20 @@ void output_grid_info(const GRID3D & grid)
 }
 
 
+void output_scalar_values(const SCALAR_GRID3D_BASE & grid)
+{
+  cout << "Scalar values:" << endl;
+  grid.OutScalar(cout, "  ");
+}
+
+
 // *******************************************************************
 // Miscellaneous functions
 // *******************************************************************
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: iso3D_nrrd_info {input nrrd file}" << endl;
+  out << "Usage: iso3D_nrrd_info [-scalar] {input nrrd file}" << endl;
 }
 
 
@@ -82,11 +104,10 @@ void usage_error()
 void parse_command_line(int argc, char ** argv)
 {
   int iarg = 1;
-  /* NOT USED
-  while (iarg < argc) {
+  while ((iarg < argc) && (argv[iarg][0] == '-')) {
     std::string s = argv[iarg];
-    if (s == "-help") {
-      help_msg();
+    if (s == "-scalar") {
+      flag_out_scalar = true;
     }
     else {
       cerr << "Usage error. Illegal parameter: " << s << endl;
@@ -95,7 +116,6 @@ void parse_command_line(int argc, char ** argv)
 
     iarg++;
   }
-  */
 
   if (iarg == argc) {
     cerr << "Usage error. Missing input filename." << endl;
