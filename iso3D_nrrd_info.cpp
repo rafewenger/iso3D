@@ -1,6 +1,6 @@
 /*!
- *  @file iso3D_nrrd_info
- *  @brief Print information from an nrrd file.
+ *  @file iso3D_nrrd_info.cpp.
+ *  @brief Print information about an nrrd file.
  */
 
 #include <iostream>
