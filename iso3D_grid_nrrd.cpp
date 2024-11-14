@@ -231,9 +231,6 @@ Read(const char * input_filename, ERROR & read_error)
     throw error;
   }
 
-  nrrdNuke(data);
-  data = NULL;
-
   read_failed = nrrdLoad(this->data, input_filename, NULL);
 
   if (read_failed) {
