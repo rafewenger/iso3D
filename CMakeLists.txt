@@ -34,4 +34,8 @@ SET(CMAKE_CPP_FLAGS_RELEASE "-O3")
 ADD_EXECUTABLE(iso3D_nrrd_info iso3D_nrrd_info.cpp
   iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp iso3D_error.cpp)
 
+ADD_EXECUTABLE(iso3D_scalar iso3D_scalar.cpp 
+  iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp
+  iso3D_command_line.cpp iso3D_error.cpp)
+
 ADD_CUSTOM_TARGET(doc COMMAND doxygen iso3D_doxygen.config)
