@@ -43,10 +43,6 @@ namespace ISO3D {
     if (iarg+1 >= argc) {
       error.AddToMessage
         ("Usage error. Missing argument for option ", argv[iarg], ".");
-      /* DEBUG
-      error.AddToMessage
-        ("Usage error. Missing argument for option ", std::string(argv[iarg]), ".");
-      */
       throw error;
     }
   }

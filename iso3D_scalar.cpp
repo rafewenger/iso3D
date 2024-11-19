@@ -101,12 +101,17 @@ void usage_error()
 
 void parse_command_line(int argc, char ** argv)
 {
+  ERROR error;
+  
   int iarg = 1;
   while ((iarg < argc) && (argv[iarg][0] == '-')) {
     std::string s = argv[iarg];
     if (s == "-add") {
       flag_add_scalar = true;
-      // TO BE CONTINUED...
+      const float x =
+        get_arg_float(iarg, argc, argv, error);
+      addend = SCALAR_TYPE(x);
+      iarg++;
     }
     else {
       cerr << "Usage error. Illegal parameter: " << s << endl;
