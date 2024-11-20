@@ -24,10 +24,10 @@
 */
 
 
-#include <bitset>
-
 #ifndef _ISO3D_TYPES_H_
 #define _ISO3D_TYPES_H_
+
+#include <bitset>
 
 namespace ISO3D {
 

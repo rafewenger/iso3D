@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+#include "iso3D_command_line.h"
 #include "iso3D_const.h"
 #include "iso3D_error.h"
 #include "iso3D_grid_nrrd.h"
@@ -19,6 +20,8 @@ using std::endl;
 // Global variables
 char * input_filename;
 bool flag_out_scalar(false);
+bool flag_out_active_cubes(false);
+SCALAR_TYPE isovalue(0.0);
 
 // Maximum number of scalar values allowed for output.
 const int MAX_NUM_SCALAR_OUTPUT(1000);
@@ -103,12 +106,20 @@ void usage_error()
 
 void parse_command_line(int argc, char ** argv)
 {
+  ERROR error;
+  
   int iarg = 1;
   while ((iarg < argc) && (argv[iarg][0] == '-')) {
     std::string s = argv[iarg];
     if (s == "-scalar") {
       flag_out_scalar = true;
     }
+    else if (s == "-isovalue {s}") {
+      const float x =
+        get_arg_float(iarg, argc, argv, error);
+      isovalue = SCALAR_TYPE(x);
+      iarg++;
+    }    
     else {
       cerr << "Usage error. Illegal parameter: " << s << endl;
       usage_error();
