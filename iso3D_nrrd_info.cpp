@@ -9,7 +9,9 @@
 #include "iso3D_const.h"
 #include "iso3D_error.h"
 #include "iso3D_grid_nrrd.h"
+#include "iso3D_isopatch.h"
 #include "iso3D_scalar_grid.h"
+#include "iso3D_templates.h"
 #include "iso3D_types.h"
 
 using namespace ISO3D;
@@ -21,7 +23,7 @@ using std::endl;
 char * input_filename;
 bool flag_out_scalar(false);
 bool flag_out_active_cubes(false);
-SCALAR_TYPE isovalue(0.0);
+SET_VALUE<SCALAR_TYPE> isovalue(0.0);
 
 // Maximum number of scalar values allowed for output.
 const int MAX_NUM_SCALAR_OUTPUT(1000);
@@ -29,6 +31,7 @@ const int MAX_NUM_SCALAR_OUTPUT(1000);
 // Forward declarations
 void parse_command_line(int argc, char ** argv);
 void output_grid_info(const GRID3D & grid);
+void output_scalar_grid_info(const SCALAR_GRID3D & scalar_grid);
 void output_scalar_values(const SCALAR_GRID3D_BASE & grid);
 
 
@@ -47,7 +50,8 @@ int main(int argc, char ** argv)
       { throw error; }
       
     output_grid_info(scalar_grid);
-
+    output_scalar_grid_info(scalar_grid);
+    
     if (flag_out_scalar) {
       if (scalar_grid.NumVertices() <= MAX_NUM_SCALAR_OUTPUT)
         { output_scalar_values(scalar_grid); }
@@ -68,6 +72,33 @@ int main(int argc, char ** argv)
 
 
 // *******************************************************************
+// Count functions
+// *******************************************************************
+
+NUMBER_TYPE count_num_active_cubes
+(const SCALAR_GRID3D & scalar_grid, const SCALAR_TYPE isovalue)
+{
+  // Initialize
+  NUMBER_TYPE num_active_cubes = 0;
+  
+  CUBE_INDEX_TYPE icube = 0;
+  for (int z = 0; z+1 < scalar_grid.AxisSize(2); z++) {
+    for (int y = 0; y+1 < scalar_grid.AxisSize(1); y++) {
+      icube = z*scalar_grid.AxisIncrement(2) + y*scalar_grid.AxisIncrement(1);
+      for (int x = 0; x+1 < scalar_grid.AxisSize(0); x++) {
+        if (intersects_cube(scalar_grid, isovalue, icube))
+          { num_active_cubes++; }
+        icube++;
+      }
+    }
+  }
+
+
+  return num_active_cubes;
+}
+
+
+// *******************************************************************
 // Output functions
 // *******************************************************************
 
@@ -80,6 +111,15 @@ void output_grid_info(const GRID3D & grid)
   cout << "Number of grid cubes: " << grid.NumCubes() << endl;
 }
 
+void output_scalar_grid_info(const SCALAR_GRID3D & scalar_grid)
+{
+  if (isovalue.IsSet()) {
+    const NUMBER_TYPE num_active_cubes =
+      count_num_active_cubes(scalar_grid, isovalue.Value());
+    cout << "Number of grid cubes intersecting the isosurface: "
+         << num_active_cubes << endl;
+  }
+}
 
 void output_scalar_values(const SCALAR_GRID3D_BASE & grid)
 {
@@ -94,7 +134,7 @@ void output_scalar_values(const SCALAR_GRID3D_BASE & grid)
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: iso3D_nrrd_info [-scalar] {input nrrd file}" << endl;
+  out << "Usage: iso3D_nrrd_info [-scalar] [-isovalue {s}] {input nrrd file}" << endl;
 }
 
 
@@ -114,10 +154,10 @@ void parse_command_line(int argc, char ** argv)
     if (s == "-scalar") {
       flag_out_scalar = true;
     }
-    else if (s == "-isovalue {s}") {
+    else if (s == "-isovalue") {
       const float x =
         get_arg_float(iarg, argc, argv, error);
-      isovalue = SCALAR_TYPE(x);
+      isovalue.Set(SCALAR_TYPE(x));
       iarg++;
     }    
     else {

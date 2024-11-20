@@ -87,5 +87,6 @@ namespace ISO3D {
     { return((this->IsSet() && Value())); }
   };
 
+}
 
 #endif
