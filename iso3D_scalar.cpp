@@ -24,7 +24,9 @@ const char * input_filename;
 const char * output_filename;
 const char * default_output_filename = "out.nrrd";
 bool flag_add_scalar(false);
+bool flag_set_scalar(false);
 SCALAR_TYPE addend(0);
+SCALAR_TYPE scalar_value(0);
 
 // Apply operation to interior vertices.
 bool flag_interior_vertices(true);
@@ -35,14 +37,22 @@ bool flag_boundary_vertices(true);
 // Set to true, if some operation modifies the scalar grid.
 bool flag_modified(false);
 
-// Forward declarations
-void parse_command_line(int argc, char ** argv);
-void add_scalar(const SCALAR_TYPE addend,
-                SCALAR_GRID3D & scalar_grid);
+// Forward declarations, add/set functions.
+void add_scalar
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
 void add_scalar_to_interior_vertices
 (const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
 void add_scalar_to_boundary_vertices
 (const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
+void set_scalar
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
+void set_scalar_of_interior_vertices
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
+void set_scalar_of_boundary_vertices
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
+
+// Forward declarations, misc functions.
+void parse_command_line(int argc, char ** argv);
 void write_scalar_grid
 (const char * output_filename, const SCALAR_GRID3D & scalar_grid);
 
@@ -71,6 +81,16 @@ int main(int argc, char ** argv)
         add_scalar_to_boundary_vertices(addend, scalar_grid);
       }
     }
+    else if (flag_set_scalar) {
+      if (flag_interior_vertices && flag_boundary_vertices)
+        { set_scalar(addend, scalar_grid); }
+      else if (flag_interior_vertices) {
+        set_scalar_of_interior_vertices(addend, scalar_grid);
+      }
+      else if (flag_boundary_vertices) {
+        set_scalar_of_boundary_vertices(addend, scalar_grid);
+      }
+    }
 
     write_scalar_grid(output_filename, scalar_grid);
   }
@@ -84,7 +104,7 @@ int main(int argc, char ** argv)
 
 
 // *******************************************************************
-// Processing functions
+// Add scalar functions
 // *******************************************************************
 
 void add_scalar(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
@@ -159,6 +179,78 @@ void add_scalar_to_boundary_vertices
 
 
 // *******************************************************************
+// Set scalar functions
+// *******************************************************************
+
+void set_scalar(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
+{
+  // A simpler way would be to use:
+  //   for (VERTEX_INDEX_TYPE iv = 0; iv < scalar_grid.NumVertices(); iv++).
+  // However, this code shows how one can process grid vertices
+  //   along the x, then y, then z axes.
+  VERTEX_INDEX_TYPE iv = 0;
+  for (int z = 0; z < scalar_grid.AxisSize(2); z++) {
+    for (int y = 0; y < scalar_grid.AxisSize(1); y++) {
+      iv = z*scalar_grid.AxisIncrement(2) + y*scalar_grid.AxisIncrement(1);
+      for (int x = 0; x < scalar_grid.AxisSize(0); x++) {
+        scalar_grid.SetScalar(iv, scalar_value);
+        iv++;
+      }
+    }
+  }
+
+  flag_modified = true;
+}
+
+
+void set_scalar_of_interior_vertices
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
+{
+  VERTEX_INDEX_TYPE iv = 0;
+  for (int z = 1; z+1 < scalar_grid.AxisSize(2); z++) {
+    for (int y = 1; y+1 < scalar_grid.AxisSize(1); y++) {
+      iv = z*scalar_grid.AxisIncrement(2) +
+        y*scalar_grid.AxisIncrement(1) + 1;
+      for (int x = 1; x+1 < scalar_grid.AxisSize(0); x++) {
+        scalar_grid.SetScalar(iv, scalar_value);
+        iv++;
+      }
+    }
+  }
+
+  flag_modified = true;
+}
+
+
+void set_scalar_of_boundary_vertices
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
+{
+  BOUNDARY_BITS_TYPE boundary_bits;
+
+  // This algorithm iterates through all the grid vertices
+  //   and checks if they are on the boundary.
+  // A faster, but much more complicated way, to process
+  //   boundary vertices would be to directly compute the
+  //   vertices on each facet. The complication is in not
+  //   processing the same boundary vertex more than once.
+  
+  for (VERTEX_INDEX_TYPE iv = 0; iv < scalar_grid.NumVertices(); iv++) {
+    // This is an expensive operation, and should be avoided
+    //   unless necessary.
+    scalar_grid.ComputeVertexBoundaryBits(iv, boundary_bits);
+    
+    if (boundary_bits != 0) {
+      // Some boundary bit is 1.
+      // Vertex is on the boundary.
+      scalar_grid.SetScalar(iv, scalar_value);
+    }
+  }
+  
+  flag_modified = true;
+}
+
+
+// *******************************************************************
 // Miscellaneous functions
 // *******************************************************************
 
@@ -171,7 +263,7 @@ void usage_msg(std::ostream & out)
 void options_msg(std::ostream & out)
 {
   out << "Options:" << endl;
-  out << "  [-add {s}] [-interior_vertices] [-boundary_vertices]" << endl;
+  out << "  [-add {s} | -set {s}] [-interior_vertices] [-boundary_vertices]" << endl;
 }
 
 void usage_error()
@@ -192,6 +284,7 @@ void help_msg()
   cout << endl;
   cout << "Options:" << endl;
   cout << "  -add {s}: Add scalar value {s} to each grid vertex." << endl;
+  cout << "  -set {s}: Set all scalar values to {s}." << endl;
   cout << "  -interior_vertices: Apply operations only to grid interior vertices." << endl;
   cout << "  -boundary_vertices: Apply operations only to grid boundary vertices." << endl;
   cout << "  -all_vertices: Apply operations to all vertices." << endl;
@@ -203,6 +296,18 @@ void help()
   help_msg();
   exit(0);
 }
+
+// Check command line options for inconsistencies.
+void check_options()
+{
+  if (flag_add_scalar && flag_set_scalar) {
+    cerr << "Usage error. Options -add and -set are incompatible."
+         << endl;
+    cerr << "  Use one or the other, not both." << endl;
+    usage_error();
+  }
+}
+
 
 void parse_command_line(int argc, char ** argv)
 {
@@ -216,6 +321,13 @@ void parse_command_line(int argc, char ** argv)
       const float x =
         get_arg_float(iarg, argc, argv, error);
       addend = SCALAR_TYPE(x);
+      iarg++;
+    }
+    else if (s == "-set") {
+      flag_set_scalar = true;
+      const float x =
+        get_arg_float(iarg, argc, argv, error);
+      scalar_value = SCALAR_TYPE(x);
       iarg++;
     }
     else if (s == "-interior_vertices") {
@@ -257,6 +369,8 @@ void parse_command_line(int argc, char ** argv)
     { output_filename = argv[iarg]; }
   else
     { output_filename = default_output_filename; }
+
+  check_options();
 }
 
     
