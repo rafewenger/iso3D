@@ -41,7 +41,9 @@ void add_scalar(const SCALAR_TYPE addend,
                 SCALAR_GRID3D & scalar_grid);
 void add_scalar_to_interior_vertices
 (const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
-  void write_scalar_grid
+void add_scalar_to_boundary_vertices
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid);
+void write_scalar_grid
 (const char * output_filename, const SCALAR_GRID3D & scalar_grid);
 
 
@@ -64,6 +66,9 @@ int main(int argc, char ** argv)
         { add_scalar(addend, scalar_grid); }
       else if (flag_interior_vertices) {
         add_scalar_to_interior_vertices(addend, scalar_grid);
+      }
+      else if (flag_boundary_vertices) {
+        add_scalar_to_boundary_vertices(addend, scalar_grid);
       }
     }
 
@@ -120,6 +125,35 @@ void add_scalar_to_interior_vertices
     }
   }
 
+  flag_modified = true;
+}
+
+
+void add_scalar_to_boundary_vertices
+(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
+{
+  BOUNDARY_BITS_TYPE boundary_bits;
+
+  // This algorithm iterates through all the grid vertices
+  //   and checks if they are on the boundary.
+  // A faster, but much more complicated way, to process
+  //   boundary vertices would be to directly compute the
+  //   vertices on each facet. The complication is in not
+  //   processing the same boundary vertex more than once.
+  
+  for (VERTEX_INDEX_TYPE iv = 0; iv < scalar_grid.NumVertices(); iv++) {
+    // This is an expensive operation, and should be avoided
+    //   unless necessary.
+    scalar_grid.ComputeVertexBoundaryBits(iv, boundary_bits);
+    
+    if (boundary_bits != 0) {
+      // Some boundary bit is 1.
+      // Vertex is on the boundary.
+      const SCALAR_TYPE s = scalar_grid.Scalar(iv);
+      scalar_grid.SetScalar(iv, s+addend);
+    }
+  }
+  
   flag_modified = true;
 }
 
