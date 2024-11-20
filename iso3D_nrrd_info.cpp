@@ -134,7 +134,7 @@ void output_scalar_values(const SCALAR_GRID3D_BASE & grid)
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: iso3D_nrrd_info [-scalar] [-isovalue {s}] {input nrrd file}" << endl;
+  out << "Usage: iso3D_nrrd_info [-isovalue {s}] [-scalar] [-help] {input nrrd file}" << endl;
 }
 
 
@@ -142,6 +142,29 @@ void usage_error()
 {
   usage_msg(cerr);
   exit(-1);
+}
+
+void help_msg()
+{
+  usage_msg(cout);
+  cout << endl;
+  cout << "iso3D_nrrd_info - Output information about the scalar grid in an nrrd file." << endl;
+  cout << endl;
+  cout << "Options:" << endl;
+  cout << "  -isovalue {s}: Set isovalue to {s}." << endl;
+  cout << "           When isovalue is set, output number of grid cubes"
+       << endl;
+  cout << "           intersecting the isosurface." << endl;
+  cout << "  -scalar: Print the grid of scalar values, formatted in rows and columns." << endl;
+  cout << "           Does not print if number of grid vertices exceeds "
+       << MAX_NUM_SCALAR_OUTPUT << "." << endl;
+  cout << "  -help:   Print this help message." << endl;
+}
+
+void help()
+{
+  help_msg();
+  exit(0);
 }
 
 void parse_command_line(int argc, char ** argv)
@@ -159,7 +182,10 @@ void parse_command_line(int argc, char ** argv)
         get_arg_float(iarg, argc, argv, error);
       isovalue.Set(SCALAR_TYPE(x));
       iarg++;
-    }    
+    }
+    else if (s == "-help") {
+      help();
+    }
     else {
       cerr << "Usage error. Illegal parameter: " << s << endl;
       usage_error();

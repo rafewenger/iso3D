@@ -264,6 +264,7 @@ void options_msg(std::ostream & out)
 {
   out << "Options:" << endl;
   out << "  [-add {s} | -set {s}] [-interior_vertices] [-boundary_vertices]" << endl;
+  out << "  [-help]" << endl;
 }
 
 void usage_error()
@@ -287,7 +288,8 @@ void help_msg()
   cout << "  -set {s}: Set all scalar values to {s}." << endl;
   cout << "  -interior_vertices: Apply operations only to grid interior vertices." << endl;
   cout << "  -boundary_vertices: Apply operations only to grid boundary vertices." << endl;
-  cout << "  -all_vertices: Apply operations to all vertices." << endl;
+  cout << "  -all_vertices:      Apply operations to all vertices." << endl;
+  cout << "  -help:    Print this help message." << endl;
 }
 
 
