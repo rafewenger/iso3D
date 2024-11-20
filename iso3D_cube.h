@@ -165,11 +165,15 @@ namespace ISO3D {
 
   protected:
 
-    // *** NEW ***
+    // *** DOES NOT WORK WITH g++10. ***
+    // Workaround is to define facet_vertex[] inside
+    //   the member function FacetVertex().
+    /* NOT CURRENTLY USED.
     static constexpr CUBE_VERTEX_INDEX
     facet_vertex[NumFacets()][NumVerticesPerFacet()] =
       { {0, 2, 4, 6}, {0, 4, 1, 5}, {0, 1, 2, 3},
         {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };
+    */
 
     
   public:
@@ -183,18 +187,14 @@ namespace ISO3D {
      */
     int FacetVertex(const int ifacet, const int j) const
     {
-      return facet_vertex[ifacet][j];
-
-      /* DEBUG
-      // For some reason, declaring this array in CUBE3D does not work.
-      // Not sure why not.
+      // Declaring this array in CUBE3D does not work in gc10.
+      // This is a workaround.
       static constexpr CUBE_VERTEX_INDEX
         facet_vertex[NumFacets()][NumVerticesPerFacet()] =
         { {0, 2, 4, 6}, {0, 4, 1, 5}, {0, 1, 2, 3},
           {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };
       
       return facet_vertex[ifacet][j];
-      */
     }
 
 
