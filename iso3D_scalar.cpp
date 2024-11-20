@@ -20,15 +20,21 @@ using std::cout;
 using std::endl;
 
 // Global variables
-char * input_filename;
+const char * input_filename;
+const char * output_filename;
+const char * default_output_filename = "out.nrrd";
 bool flag_add_scalar(false);
 SCALAR_TYPE addend(0);
+
+// Set to true, if some operation modifies the scalar grid.
+bool flag_modified(false);
 
 // Forward declarations
 void parse_command_line(int argc, char ** argv);
 void add_scalar(const SCALAR_TYPE addend,
                 SCALAR_GRID3D & scalar_grid);
-
+void write_scalar_grid
+(const char * output_filename, const SCALAR_GRID3D & scalar_grid);
 
 int main(int argc, char ** argv)
 {
@@ -48,6 +54,7 @@ int main(int argc, char ** argv)
       add_scalar(addend, scalar_grid);
     }
 
+    write_scalar_grid(output_filename, scalar_grid);
   }
   catch (ERROR & error) {
     error.Out(std::cerr);
@@ -75,10 +82,12 @@ void add_scalar(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
       for (int x = 0; x < scalar_grid.AxisSize(0); x++) {
         const SCALAR_TYPE s = scalar_grid.Scalar(iv);
         scalar_grid.SetScalar(iv, s+addend);
+        iv++;
       }
     }
   }
-    
+
+  flag_modified = true;
 }
 
 
@@ -88,7 +97,7 @@ void add_scalar(const SCALAR_TYPE addend, SCALAR_GRID3D & scalar_grid)
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: iso3D_scalar [-add {s}] {input nrrd file} {output nrrd file}"
+  out << "Usage: iso3D_scalar [-add {s}] {input nrrd file} [{output nrrd file}]"
       << endl;
 }
 
@@ -126,11 +135,36 @@ void parse_command_line(int argc, char ** argv)
     usage_error();
   }
 
-  if (iarg+1 < argc) {
+  if (iarg+2 < argc) {
     usage_error();
   }
 
   input_filename = argv[iarg];
+  iarg++;
+
+  if (iarg < argc)
+    { output_filename = argv[iarg]; }
+  else
+    { output_filename = default_output_filename; }
 }
 
     
+void write_scalar_grid
+(const char * output_filename, const SCALAR_GRID3D & scalar_grid)
+{
+  const char * ofilename = output_filename;
+  
+  if (ofilename == NULL)
+    { ofilename = default_output_filename; }
+
+  if (flag_modified) {
+    cout << "Writing scalar grid to nrrd file: "
+         << ofilename << endl;
+  }
+  else {
+    cout << "Copying scalar grid to nrrd file: "
+         << ofilename << endl;
+  }
+
+  write_scalar_grid_nrrd(ofilename, scalar_grid);
+}

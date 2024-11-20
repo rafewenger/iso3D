@@ -29,6 +29,37 @@
 using namespace ISO3D;
 
 // *******************************************************************
+// Write functions
+// *******************************************************************
+
+// Write scalar grid in nrrd file.
+void ISO3D::write_scalar_grid_nrrd
+(const char * output_filename, const SCALAR_GRID3D & grid)
+{
+  PROCEDURE_ERROR error("write_scalar_grid_nrrd");
+
+  if (output_filename == NULL) {
+    error.AddToMessage("Programming error: Empty output filename.");
+    throw error;
+  }
+
+  Nrrd * data = nrrdNew();
+
+  wrap_scalar_grid_data(data, grid.ScalarPtrConst(),
+                        grid.Dimension(), grid.AxisSize());
+  bool save_failed = nrrdSave(output_filename, data, NULL);
+
+  nrrdNix(data);
+
+  if (save_failed) {
+    error.AddToMessage("Unable to save nrrd data to ", output_filename, ".");
+    add_nrrd_message(error);
+    throw error;
+  }
+
+}
+
+// *******************************************************************
 // Class NRRD_DATA member functions
 // *******************************************************************
 
