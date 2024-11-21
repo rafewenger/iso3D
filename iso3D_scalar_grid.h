@@ -1,5 +1,5 @@
 /*!
- *  @file iso3D_grid.h
+ *  @file iso3D_scalar_grid.h
  *  @brief Grid class.
  *  @authors "Rephael Wenger"
  */
