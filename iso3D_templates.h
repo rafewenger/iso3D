@@ -94,6 +94,37 @@ namespace ISO3D {
 
   //@}
 
+
+  // *****************************************************************
+  //! @name CONVERT/INITIALIZE C++ STL VECTORS.
+  // *****************************************************************
+
+  //@{
+
+  /// @brief Returns C++ pointer to C array storing in vector data.
+  /// - If vector is empty, returns NULL pointer.
+  /// - If vector is not empty, returns pointer to a C array.
+  template <typename T>
+  const T * vector2pointer(const std::vector<T> & v)
+  {
+    if (v.empty()) { return(NULL); }
+    else { return v.data(); }
+  }
+
+
+  /*!
+   *  @overload
+   *  @brief Returns C++ pointer to C array storing in vector data. (Non const.)
+   *  - Version that returns non const pointer.
+   */
+  template <typename T>
+  T * vector2pointer(std::vector<T> & v)
+  {
+    if (v.empty()) { return(NULL); }
+    else { return v.data(); }
+  }    
+
+  
   // *****************************************************************
   //! @name INTEGER POWER FUNCTIONS
   // *****************************************************************

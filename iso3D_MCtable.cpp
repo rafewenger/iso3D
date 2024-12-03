@@ -27,7 +27,7 @@
 
 #include "iso3D_bits.h"
 #include "iso3D_MCtable.h"
-#include "iso3D_MCtable_orient.h"
+#include "iso3D_simplex.h"
 
 using namespace ISO3D;
 
