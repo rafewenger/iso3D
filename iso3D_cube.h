@@ -2,6 +2,7 @@
  *  @file iso3D_cube.h
  *  @brief Cube data structure.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*
@@ -169,7 +170,7 @@ namespace ISO3D {
     // Workaround is to define facet_vertex[] inside
     //   the member function FacetVertex().
     /* NOT CURRENTLY USED.
-    static constexpr CUBE_VERTEX_INDEX
+    static constexpr CUBE_VERTEX_INDEX_TYPE
     facet_vertex[NumFacets()][NumVerticesPerFacet()] =
       { {0, 2, 4, 6}, {0, 4, 1, 5}, {0, 1, 2, 3},
         {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };
@@ -189,7 +190,7 @@ namespace ISO3D {
     {
       // Declaring this array in CUBE3D does not work in gc10.
       // This is a workaround.
-      static constexpr CUBE_VERTEX_INDEX
+      static constexpr CUBE_VERTEX_INDEX_TYPE
         facet_vertex[NumFacets()][NumVerticesPerFacet()] =
         { {0, 2, 4, 6}, {0, 4, 1, 5}, {0, 1, 2, 3},
           {5, 7, 1, 3}, {3, 7, 2,6}, {6, 7, 4, 5} };

@@ -2,6 +2,7 @@
  *  @file iso3D_command_line.h
  *  @brief Routines for processing command line arguments
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*

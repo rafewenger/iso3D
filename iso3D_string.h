@@ -2,6 +2,7 @@
  *  @file iso3D_string.h
  *  @brief Class for handling strings.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*

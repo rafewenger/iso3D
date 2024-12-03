@@ -2,6 +2,7 @@
  *  @file iso3D_grid.h
  *  @brief Grid class.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*

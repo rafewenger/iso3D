@@ -2,6 +2,7 @@
  *  @file iso3D_const.h
  *  @brief ISO3D global constants
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*
@@ -32,6 +33,16 @@ namespace ISO3D {
   // Global variables.
   const int DIM3(3);
   const int NUM_VERTICES_PER_TRIANGLE(3);
+
+  /*!
+   *  @brief Maximum number of polytope vertices and facets.
+   *  - Should be a power of 2 since this is used to define bitsets.
+   *  - Note: Even if number of polytope vertices is less than
+   *    or equal to MAX_NUM_POLYTOPE_VERTICES, there may not be
+   *    enough memory to store the isosurface table.
+   */
+  const int MAX_NUM_POLYTOPE_VERTICES(32);
+  const int MAX_NUM_POLYTOPE_FACETS(16);
 }
 
 #endif

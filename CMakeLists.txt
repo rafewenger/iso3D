@@ -15,7 +15,7 @@ IF (NOT CMAKE_BUILD_TYPE)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
 LINK_DIRECTORIES("${NRRD_LIBDIR}")
-LINK_LIBRARIES(NrrdIO z)
+LINK_LIBRARIES(expat NrrdIO z)
 
 # Possibly turn on usage of zlib compression (requires linking with libz)
 # (i.e., programs compiled with ITKNrrdIO must also be compiled with zlib)
@@ -33,6 +33,10 @@ SET(CMAKE_CPP_FLAGS_RELEASE "-O3")
 
 ADD_EXECUTABLE(iso3D_nrrd_info iso3D_nrrd_info.cpp
   iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp iso3D_error.cpp)
+
+ADD_EXECUTABLE(iso3D_MCtable_info iso3D_MCtable_info.cpp
+  iso3D_MCtable.cpp iso3D_MCtable_poly.cpp iso3D_MCtable_xitIO.cpp
+  iso3D_error.cpp)
 
 ADD_EXECUTABLE(iso3D_scalar iso3D_scalar.cpp 
   iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp

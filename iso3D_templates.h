@@ -2,6 +2,7 @@
  *  @file iso3D_templates.h
  *  @brief Some simple template definitions for iso3D.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*
@@ -27,12 +28,16 @@
 #ifndef _ISO3D_TEMPLATES_H_
 #define _ISO3D_TEMPLATES_H_
 
+#include <limits>
+
 namespace ISO3D {
   
   // *****************************************************************
-  // TEMPLATE CLASS SET_VALUE
+  //! @name Template class SET_VALUE
   // *****************************************************************
 
+  //@{
+  
   /// @brief Template class SET_VALUE with flag is_set
   ///    to indicate if value has been set.
   template <typename T>
@@ -87,6 +92,132 @@ namespace ISO3D {
     { return((this->IsSet() && Value())); }
   };
 
+  //@}
+
+  // *****************************************************************
+  //! @name INTEGER POWER FUNCTIONS
+  // *****************************************************************
+
+  //@{
+
+
+  /// @brief Integer power function.
+  /// @param[out] result Equals (base)^p.
+  template <typename ITYPE0, typename ITYPE1, typename ITYPE2>
+  void int_power(const ITYPE0 base, const ITYPE1 p, 
+                 ITYPE2 & result)
+  {
+    result = 1;
+    for (ITYPE1 k = 0; k < p; k++) {
+      result *= base;
+    }
+  }
+
+
+  /// @brief Integer power function with error checking.
+  /// @param[out] result Equals (base)^p.
+  template <typename ITYPE0, typename ITYPE1, typename ITYPE2,
+            typename ETYPE>
+  void int_power(const ITYPE0 base, const ITYPE1 p, 
+                 ITYPE2 & result, ETYPE & error)
+  {
+    const ITYPE2 result_bound = (std::numeric_limits<ITYPE2>::max()/base);
+    
+    result = 1;
+    for (ITYPE1 k = 0; k < p; k++) {
+
+      if (result > result_bound) {
+        error.AddToMessage
+          ("Result out of bounds. ", base, "^", p,
+           " is larger than ", std::numeric_limits<ITYPE2>::max(), ".");
+        throw error;
+      }
+      result *= base;
+    }
+  }
+  
+  //@}
+
+    
+  // *****************************************************************
+  //! @name CHECK FUNCTIONS
+  // *****************************************************************
+
+  //@{
+
+  /// @brief Return true if array memory is allocated.
+  /// - Return false and set error message if array is NULL.
+  template <typename T>
+  bool check_array_allocated
+  (const T * array, const char * array_name, ERROR & error)
+  {
+    if (array == NULL) {
+      error.AddToMessage("Programming error. Memory for array ",
+                       array_name, "[] not allocated.");
+      return(false);
+    }
+
+    return(true);
+  }
+
+
+  /// @brief Return true if array is not empty (not NULL).
+  /// - Return false and set error message if array is NULL.
+  template <typename T>
+  bool check_array_non_empty
+  (const T * array, const char * array_name, ERROR & error)
+  {
+    if (array == NULL) {
+      error.AddToMessage("Programming error. Array ",
+                       array_name, "[] is empty.");
+      return(false);
+    }
+
+    return(true);
+  }
+
+
+  /// @brief Return true if vA.size() = vB.size().
+  /// - Return false and set error message
+  ///   if vA.size() != vB.size().
+  template <typename TA, typename TB>
+  bool check_equal_vector_sizes
+  (const std::vector<TA> & vA,
+   const std::vector<TB> & vB,
+   const char * vA_name,
+   const char * vB_name,
+   ERROR & error)
+  {
+    if (vA.size() != vB.size()) {
+      error.AddToMessage
+        ("Programming error. Unequal sizes of C++ STL vectors ",
+         vA_name, " and ", vB_name, ".");
+      error.AddToMessage("  ", vA_name, ".size() = ", vA.size(), ".");
+      error.AddToMessage("  ", vB_name, ".size() = ", vB.size(), ".");
+      return(false);
+    }
+
+    return(true);
+  }
+
+
+  /// Return true if ptr is NULL
+  template <typename T>
+  bool check_is_NULL
+  (const T * ptr, const char * variable_name, ERROR & error)
+  {
+    if (ptr != NULL) {
+      error.AddToMessage
+        ("Programming error.  Previously allocated memory for variable ",
+         variable_name, " not released.");
+      return(false);
+    }
+
+    return(true);
+  }
+
+  //@}
+    
 }
 
 #endif

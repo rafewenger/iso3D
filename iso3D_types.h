@@ -2,6 +2,7 @@
  *  @file iso3D_types.h
  *  @brief Type definitions for iso3D.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*
@@ -29,6 +30,8 @@
 
 #include <bitset>
 
+#include "iso3D_const.h"
+
 namespace ISO3D {
 
   //! @name Grid types.
@@ -40,16 +43,30 @@ namespace ISO3D {
   typedef GRID_COORD_TYPE CUBE_COORD_TYPE;
 
   //! @name Cube face types.
-  typedef unsigned char CUBE_VERTEX_INDEX;
-  typedef unsigned char CUBE_FACET_INDEX;
-  typedef unsigned char CUBE_EDGE_INDEX;
+  typedef unsigned char CUBE_VERTEX_INDEX_TYPE;
+  typedef unsigned char CUBE_FACET_INDEX_TYPE;
+  typedef unsigned char CUBE_EDGE_INDEX_TYPE;
+  typedef std::bitset<MAX_NUM_POLYTOPE_VERTICES> CUBE_VERTEX_BITSET;
+  typedef std::bitset<MAX_NUM_POLYTOPE_FACETS> CUBE_FACET_BITSET;
 
+  //! @name Deprecated types. (Types should end in INDEX.)
+  typedef CUBE_VERTEX_INDEX_TYPE CUBE_VERTEX_INDEX;
+  typedef CUBE_FACET_INDEX_TYPE CUBE_FACET_INDEX;
+  typedef CUBE_EDGE_INDEX_TYPE CUBE_EDGE_INDEX;
+  
   //! Bitset types
   typedef std::bitset<16> BOUNDARY_BITS_TYPE;
     
   //! Non-integer types
   typedef float SCALAR_TYPE;
   typedef float COORD_TYPE;
+
+  //! Isosurface lookup table types.
+  typedef int TABLE_INDEX_TYPE;
+  
+  //! Isosurface types
+  typedef int ISO_VERTEX_INDEX_TYPE;
+  
 }
 
 #endif

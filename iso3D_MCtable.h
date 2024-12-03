@@ -2,6 +2,7 @@
  *  @file iso3D_MCtable.h
  *  @brief Marching cubes lookup table.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*
@@ -24,23 +25,21 @@
 */
 
 
-#ifndef _ISO3D_MCTABLE_H_
-#define _ISO3D_MCTABLE_H_
+#ifndef _ISO3D_MC_TABLE_H_
+#define _ISO3D_MC_TABLE_H_
+
+#include <bitset>
 
 #include "iso3D_const.h"
 #include "iso3D_types.h"
 #include "iso3D_cube.h"
 #include "iso3D_error.h"
+#include "iso3D_MCtable_poly.h"
+#include "iso3D_MCtable_properties.h"
 #include "iso3D_templates.h"
+#include "iso3D_types.h"
 
 namespace ISO3D {
-
-  // ***************************************************************
-  // Type definition
-  // ***************************************************************
-
-  /// @brief Index of entry in isosurface lookup table.  
-  typedef int TABLE_INDEX_TYPE;    
 
   // ***************************************************************
   // ISOSURFACE VERTEX
@@ -60,8 +59,8 @@ namespace ISO3D {
     SET_VALUE<std::string> label;
 
   public:
-    ISOSURFACE_VERTEX();        // constructor
-    ~ISOSURFACE_VERTEX();       // destructor
+    ISOSURFACE_VERTEX(){};        //< Constructor
+    ~ISOSURFACE_VERTEX();         ///< Destructor.
 
     // Get Functions
 
@@ -86,12 +85,11 @@ namespace ISO3D {
     std::string Label() const { return label.Value(); };
 
     /// Return true if label is set.
-    bool IsLabelSet() const { return is_label_set.IsSet(); };
+    bool IsLabelSet() const { return label.IsSet(); };
 
     // Set Functions
     void SetType(const ISOSURFACE_VERTEX_TYPE t) { vtype = t; };
     void SetFace(const int index) { face = index; };
-    void SetNumCoord(const int numc);
     void SetCoord(const int ic, const COORD_TYPE c) 
     { coord[ic] = c; };
     void SetLabel(const std::string & s) 
@@ -110,6 +108,23 @@ namespace ISO3D {
    */
   class MC_TABLE {
 
+  public:
+
+    /// @brief Type of index of vertex in isosurface patch.
+    typedef int ISOPATCH_VERTEX_INDEX_TYPE;
+
+    /*!
+     *  @brief Size of bitset used to represent isosurface vertices
+     *    in isotable entries.
+     *  - Note: Number of isosurface vertices can be 
+     *    at most ISO_VERTEX_BITSET_SIZE.
+     *  - Note: Isosurface vertex bitsets are used in orienting
+     *    isosurface table entries.
+     */
+    static const int ISO_VERTEX_BITSET_SIZE = 64;
+
+    typedef std::bitset<ISO_VERTEX_BITSET_SIZE> ISO_VERTEX_BITSET;
+    
   protected:
 
     /// Entry in the isosurface lookup table.
@@ -117,20 +132,23 @@ namespace ISO3D {
 
     public:
       int num_simplices;
-      ISOSURFACE_VERTEX_INDEX * simplex_vertex_list;
+      ISOPATCH_VERTEX_INDEX_TYPE * simplex_vertex_list;
       MC_TABLE_ENTRY();                  // constructor
       ~MC_TABLE_ENTRY();                 // destructor
 
-      bool Check(IJK::ERROR & error_msg) const;
+      bool Check(ERROR & error_msg) const;
       void FreeAll();                            // free all memory
     };
 
 
   protected:
 
-    /// @brief Isosurface table properties.
-    ISOSURFACE_TABLE_PROPERTIES table_properties;
+    /// @brief Marching cubes isosurface table properties.
+    MC_TABLE_PROPERTIES table_properties;
 
+    MC_TABLE_POLY polytope;      ///< Mesh polytope.
+    int simplex_dimension;       ///< Simplex dimension.
+    
     /// Array of isosurface vertex descriptors.
     ISOSURFACE_VERTEX * isosurface_vertex;
 
@@ -183,7 +201,7 @@ namespace ISO3D {
       { return table_properties.EncodingString(_encoding); };
 
     /// Return isosurface table properties.
-    const ISOSURFACE_TABLE_PROPERTIES & Properties() const
+    const MC_TABLE_PROPERTIES & Properties() const
     { return table_properties; }
 
     /// Return polytope dimension.
@@ -197,7 +215,8 @@ namespace ISO3D {
     { return (Dimension() == SimplexDimension()); }
     
     /// Return number of vertices in each isosurface simplex.
-    int NumVerticesPerSimplex() const { return (SimplexDimension()+1); };
+    int NumVerticesPerSimplex() const
+    { return (SimplexDimension()+1); };
 
     /// @brief Return number of isosurface vertices
     ///   in array isosurface_vertex[].
@@ -208,7 +227,7 @@ namespace ISO3D {
     int NumTableEntries() const { return num_table_entries; };
 
     /// Access isosurface table polytope.
-    const ISOTABLE_POLY_BASE & Polytope() const
+    const MC_TABLE_POLY_BASE & Polytope() const
     { return polytope; };
 
     /// Return polytope shape.
@@ -221,7 +240,7 @@ namespace ISO3D {
 
     /// @brief Return number of simplices in isosurface patch
     ///   for table entry \a it.
-    int NumSimplices(const TABLE_INDEX it) const
+    int NumSimplices(const TABLE_INDEX_TYPE it) const
     { return entry[it].num_simplices; }; 
 
     /*!
@@ -231,35 +250,27 @@ namespace ISO3D {
      *  @param is Simplex \a is of table entry \a it.
      *  @param k Return \a k'th vertex of simplex \a is.
      */
-    ISOSURFACE_VERTEX_INDEX SimplexVertex
-    (const TABLE_INDEX it, const int is, const int k) const
+    int SimplexVertex
+    (const TABLE_INDEX_TYPE it, const int is, const int k) const
     { return(entry[it].simplex_vertex_list[is*NumVerticesPerSimplex()+k]); };
 
     /*!
      *  @brief Return pointer to vertices of all simplices
      *    in table entry table_index.
      */
-    const ISOSURFACE_VERTEX_INDEX *
-    SimplexVertices(const TABLE_INDEX table_index) const
+    const ISOPATCH_VERTEX_INDEX_TYPE *
+    SimplexVertices(const TABLE_INDEX_TYPE table_index) const
     { return entry[table_index].simplex_vertex_list; }
       
     /*!
      *  @brief Return pointer to vertices of simplex isimplex
      *    in table entry table_index.
      */
-    const ISOSURFACE_VERTEX_INDEX *
-    SimplexVertices(const TABLE_INDEX table_index,
+    const ISOPATCH_VERTEX_INDEX_TYPE *
+    SimplexVertices(const TABLE_INDEX_TYPE table_index,
                     const int isimplex) const
     { return (entry[table_index].simplex_vertex_list +
               NumVerticesPerSimplex()*isimplex); }
-
-    /*!
-     *  @brief Return maximum number of polytope vertices permitted 
-     *    in any table.
-     *  - Note: Even tables for polyhedra of this size are probably impossible
-     *    to compute/store.
-     */
-    int MaxNumVertices() const { return max_num_vertices; };
 
     /// Return true if table memory is allocated.
     bool IsTableAllocated() const
@@ -287,7 +298,7 @@ namespace ISO3D {
     /*!
      *  @brief Value representing negative "-" label in isosurface table
      *    with BINARY encoding.
-     *  - IJK::convert2base converts table index to array of digits,
+     *  - convert2base converts table index to array of digits,
      *    each one representing label of a vertex.
      *  - BinaryNegative() is the digit indicating a negative label.
      */
@@ -300,7 +311,7 @@ namespace ISO3D {
     /*!
      *  @brief Value representing negative "-" label in isosurface table
      *    with BASE3 encoding.
-     *  - IJK::convert2base converts table index to array of digits,
+     *  - convert2base converts table index to array of digits,
      *    each one representing label of a vertex.
      *  - Base3Negative() is the digit indicating a negative label.
      */
@@ -317,7 +328,7 @@ namespace ISO3D {
 
     /*!
      *  @brief Return value representing negative label.
-     *  - IJK::convert2base converts table index to array of digits,
+     *  - convert2base converts table index to array of digits,
      *    each one representing label of a vertex.
      *  - NegativeLabelValue() returns digit indicate a negative label.
      */
@@ -329,7 +340,7 @@ namespace ISO3D {
 
     /*!
      *  @brief Return value representing positive label.
-     *  - IJK::convert2base converts table index to array of digits,
+     *  - convert2base converts table index to array of digits,
      *    each one representing label of a vertex.
      *  - PositiveLabelValue() returns digit indicating a positive label.
      */
@@ -344,7 +355,8 @@ namespace ISO3D {
      *    in table entries table_indexA and table_indexB.
      */
     bool AreAllFacetVertexLabelsIdentical
-    (const TABLE_INDEX table_indexA, const TABLE_INDEX table_indexB,
+    (const TABLE_INDEX_TYPE table_indexA,
+     const TABLE_INDEX_TYPE table_indexB,
      const int ifacet) const;
 
     ///@}
@@ -358,8 +370,10 @@ namespace ISO3D {
     { polytope.SetShape(shape); }
     void SetNumPolyVertices(const int numv) 
     { polytope.SetNumVertices(numv); };
-    void SetNumPolyEdges(const int nume) { polytope.SetNumEdges(nume); };
-    void SetNumPolyFacets(const int numf) { polytope.SetNumFacets(numf); };
+    void SetNumPolyEdges(const int nume)
+    { polytope.SetNumEdges(nume); };
+    void SetNumPolyFacets(const int numf)
+    { polytope.SetNumFacets(numf); };
     void SetPolySize(const int numv, const int nume, const int numf)
     { SetNumPolyVertices(numv); SetNumPolyEdges(nume); 
       SetNumPolyFacets(numf); };
@@ -369,15 +383,17 @@ namespace ISO3D {
     //   SetPolyVertexCoord
     void SetPolyEdge(const int ie, const int iv0, const int iv1)
     { polytope.SetEdge(ie, iv0, iv1); };
-    // Note: SetNumPolyEdges or SetPolySize must be called before SetPolyEdge
+    // Note: SetNumPolyEdges or SetPolySize must be called
+    //   before SetPolyEdge
     void SetPolyNumFacetVertices(const int jf, const int numv)
     { polytope.SetNumFacetVertices(jf, numv); }
     void SetPolyFacetVertex(const int jf, const int k, const int iv)
     { polytope.SetFacetVertex(jf, k, iv); };
-    // Note: SetPolyNumFacetVertices must be called before SetPolyFacetVertex
+    // Note: SetPolyNumFacetVertices must be called
+    //   before SetPolyFacetVertex
 
     /// @brief Set polytope to _poly.
-    void Set(const ISOTABLE_POLY_BASE & _poly)
+    void Set(const MC_TABLE_POLY_BASE & _poly)
     { this->polytope = _poly; };
 
     ///@}
@@ -390,10 +406,8 @@ namespace ISO3D {
     { isosurface_vertex[i].SetType(t); };
     void SetIsoVertexFace(const int i, const int index) 
     { isosurface_vertex[i].SetFace(index); };
-    void SetIsoVertexNumCoord(const int i, const int numc)
-    { isosurface_vertex[i].SetNumCoord(numc); };
     void SetIsoVertexCoord(const int i, 
-                           const int ic, const ISOSURFACE_VERTEX::COORD_TYPE c) 
+                           const int ic, const COORD_TYPE c) 
     { isosurface_vertex[i].SetCoord(ic, c); };
     void SetIsoVertexLabel(const int i, const std::string & s) 
     { isosurface_vertex[i].SetLabel(s); };
@@ -404,7 +418,7 @@ namespace ISO3D {
     (const int iv, const ISOSURFACE_VERTEX & isosurface_vertex);
     
     /// @brief Copy isosurface vertices from isotable.
-    void CopyIsosurfaceVertices(const ISOSURFACE_TABLE & isotable);
+    void CopyIsosurfaceVertices(const MC_TABLE & isotable);
                                 
     // store polytope vertices, edges or faces as isosurface vertices
     void StorePolyVerticesAsIsoVertices(const int vstart);
@@ -414,7 +428,8 @@ namespace ISO3D {
 
     /// @name Set Isosurface Table Functions
     ///@{
-    void SetSimplexDimension(const int d) { this->simplex_dimension = d; };
+    void SetSimplexDimension(const int d)
+    { this->simplex_dimension = d; };
     void SetEncoding(const ENCODING encoding);
     void SetBinaryEncoding() { SetEncoding(BINARY); };
     void SetBase3Encoding() { SetEncoding(BASE3); };
@@ -422,15 +437,17 @@ namespace ISO3D {
     { table_properties.SetEncoding(encoding_str); }
 
     virtual void SetNumTableEntries(const int num_table_entries);
-    void SetNumSimplices(const TABLE_INDEX it, const int nums);
+    void SetNumSimplices(const TABLE_INDEX_TYPE it, const int nums);
 
-    /// @brief Set vertex iv of simplex is in table entry it to isov.
-    void SetSimplexVertex(const TABLE_INDEX it, const int is, 
-                          const int iv, const ISOSURFACE_VERTEX_INDEX isov);
+    /// @brief Set k'th vertex of simplex is in table entry it to isov.
+    void SetSimplexVertex
+    (const TABLE_INDEX_TYPE it, const int is, const int k,
+     const int isov);
 
     /// @brief Set simplex vertices.
     void SetSimplexVertices
-    (const TABLE_INDEX it, const ISOSURFACE_VERTEX_INDEX simplex_vertices[],
+    (const TABLE_INDEX_TYPE it,
+     const ISOPATCH_VERTEX_INDEX_TYPE simplex_vertices[],
      const int num_simplices);
 
     void SetTableType(const LOOKUP_TABLE_TYPE lookup_table_type);
@@ -462,26 +479,19 @@ namespace ISO3D {
     ///@{
 
     /// @brief Copy polytope from isotable.
-    void CopyPolytope(const ISOSURFACE_TABLE & isotable)
+    void CopyPolytope(const MC_TABLE & isotable)
     { Set(isotable.Polytope()); }
 
     /// @brief Copy isosurface table properties from isotable.
-    void CopyProperties(const ISOSURFACE_TABLE & isotable)
+    void CopyProperties(const MC_TABLE & isotable)
     { table_properties.Copy(isotable.Properties()); }
 
     ///@}
 
-    /// @name Generate Polytope Functions
+    /// @name Generate Cube Function
     ///@{
-    void GenCube(const int cube_dimension) 
-    { polytope.GenCube(cube_dimension); };
-    void GenCubeOrderA(const int cube_dimension) 
-    { polytope.GenCubeOrderA(cube_dimension); };
-    // Note: Cubes of dimension > 4 will have too many vertices
-    void GenSimplex(const int simplex_dimension) 
-    { polytope.GenSimplex(simplex_dimension); };
-    void GenPyramid(const int pyramid_dimension) 
-    { polytope.GenPyramid(pyramid_dimension); };
+    void GenCube3D() 
+    { polytope.GenCube3D(); };
     ///@}
 
     /// @name Process Simplex Orientations
@@ -492,7 +502,7 @@ namespace ISO3D {
      *  - Used to orient initial simplex for setting table orientation.
      */
     void SortSimplexVertices
-    (const TABLE_INDEX it, const int isimplex);
+    (const TABLE_INDEX_TYPE it, const int isimplex);
     
     /*!
      *  @brief Flip isosurface polytope orientations from +1 to -1 
@@ -502,7 +512,8 @@ namespace ISO3D {
      *  @param it Table entry index.  In range [0..NumTableEntries()-1].
      *  @param ipoly Polytope index.
      */
-    void FlipIsoPolyOrientation(const TABLE_INDEX it, const int ipoly);
+    void FlipIsoPolyOrientation
+    (const TABLE_INDEX_TYPE it, const int ipoly);
 
     /*!
      *  @brief Flip all isosurface polytope orientations 
@@ -511,7 +522,7 @@ namespace ISO3D {
      *    in simplex.
      *  @param it Table entry index.  In range [0..NumTableEntries()-1].
      */
-    void FlipAllIsoPolyOrientations(const TABLE_INDEX table_index);
+    void FlipAllIsoPolyOrientations(const TABLE_INDEX_TYPE table_index);
 
     /*!
      *  @brief Flip all isosurface polytope orientations 
@@ -532,7 +543,8 @@ namespace ISO3D {
      *    @pre istart is in range [0..(NumSimplices(it)-1].
      */
     void OrientSimplicesInTableEntry
-    (const TABLE_INDEX table_index, const TABLE_INDEX istart);
+    (const TABLE_INDEX_TYPE table_index,
+     const TABLE_INDEX_TYPE istart);
 
     /*!
      *  @overload
@@ -544,7 +556,8 @@ namespace ISO3D {
      *      where is_orientedA[isimplexA] is true.
      */
     void OrientSimplicesInTableEntry
-    (const TABLE_INDEX table_index, const TABLE_INDEX istart,
+    (const TABLE_INDEX_TYPE table_index,
+     const TABLE_INDEX_TYPE istart,
      std::vector<bool> & is_oriented);
 
     /*!
@@ -554,7 +567,7 @@ namespace ISO3D {
      *    in entry[table_index].simplex_vertex_list[].
      */
     void OrientAllSimplicesInTableEntry
-    (const TABLE_INDEX table_index, int & num_components);
+    (const TABLE_INDEX_TYPE table_index, int & num_components);
     
     /*!
      *  @brief Return false if simplices in table entry have 
@@ -562,7 +575,7 @@ namespace ISO3D {
      *  @param table_index Index of table entry.
      */
     bool AreSimplicesConsistentlyOriented
-    (const TABLE_INDEX table_indexA,
+    (const TABLE_INDEX_TYPE table_indexA,
      int & isimplexA, int & isimplexB) const;
 
     ///@}
@@ -581,20 +594,52 @@ namespace ISO3D {
     bool CheckDimension(const int d) const;
     bool CheckDimension() const
     { return(CheckDimension(Dimension())); };
-    bool CheckTable(IJK::ERROR & error_msg) const;
-    bool Check(IJK::ERROR & error_msg) const;
+    bool CheckTable(ERROR & error_msg) const;
+    bool Check(ERROR & error_msg) const;
 
     /// @brief Return false and set error message if table_index
     ///   is not in range [0..NumTableEntries()-1].
     bool CheckTableIndex
-    (const int table_index, IJK::ERROR & error) const;
+    (const int table_index, ERROR & error) const;
     
     ///@}
 
   };
 
-  typedef ISOSURFACE_TABLE * ISOSURFACE_TABLE_PTR;
+  typedef MC_TABLE * MC_TABLE_PTR;
 
+
+  // ***************************************************************
+  // TABLE MANIPULATION ROUTINES
+  // ***************************************************************
+
+  /*!
+   *  @brief Invert marching cubes lookup table.
+   *  - Swap isosurface patches in table[i] and table[numEntry-1-i]
+   *    where numEntry is the number of isosurface table entries.
+   *  - Note: Swapping patches swaps SEPARATE_NEG and SEPARATE_POS
+   *    and flips isosurface polytope orientations.
+   *  @param isotableA Input isosurface table.
+   *  @param[out] Inverted table.
+   *    - isotableB[i] has isosurface patch isotableA[numEntry-1-i]
+   *      where numEntry is the number of isosurface table entries.
+   *    - isotableB.SeparationType() is the opposite of
+   *      isotableA.SeparationType().
+   *    - isotableB.IsoPolyOrientation() is the opposite of
+   *      isotableA.IsoPolyOrientation().
+   */
+  void invert_mcube_isotable
+    (const MC_TABLE & isotableA, MC_TABLE & isotableB);
+
+
+  // *******************************************************************
+  // UTILITY FUNCTIONS
+  // *******************************************************************
+
+  // calculate num table entries = (num_colors)^(num_vert)
+  unsigned long calculate_num_entries
+  (const int num_vert, const int num_colors);
+    
 }
 
 #endif

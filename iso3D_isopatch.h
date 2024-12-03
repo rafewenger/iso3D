@@ -2,6 +2,7 @@
  *  @file iso3D_isopatch.h
  *  @brief Routines for extracting an isosurface patch from a cube.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*

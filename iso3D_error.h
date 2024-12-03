@@ -2,6 +2,7 @@
  *  @file iso3D_error.h
  *  @brief Class for handling errors.
  *  @authors "Rephael Wenger"
+ *  @version 0.0.2
  */
 
 /*
@@ -184,7 +185,24 @@ namespace ISO3D {
           out << MessageLine(i) << "\n";
         }
       }
-    
+
+    ERROR & operator ()(const std::string & msg1)
+    {
+      AddToMessage(msg1);
+      return(*this);
+    };
+
+    ERROR & operator ()
+      (const std::string & msg1, const std::string & msg2)
+    {
+      AddToMessage(msg1);
+      AddToMessage(msg2);
+      return(*this);
+    }
+
+    /// @brief Clear all message.
+    void ClearAll()
+    { msg.clear(); }
   };
 
 
@@ -195,11 +213,35 @@ namespace ISO3D {
    */
   class PROCEDURE_ERROR:public ERROR {
 
+  protected:
+    std::string procedure_name;
+    
   public:
 
     /// @brief Constructor.
     PROCEDURE_ERROR(const char * proc_name)
-    { AddProcNameToMessage(proc_name); }
+    {
+      this->procedure_name = procedure_name;
+      AddProcNameToMessage(proc_name);
+    }
+
+    /*!
+     *  @overload
+     *  @brief Constructor. Set procedure name and an error message.
+     */
+    PROCEDURE_ERROR(const char * procedure_name, const char * error_msg)
+    {
+      this->procedure_name = procedure_name;
+      AddProcNameToMessage(procedure_name);
+      AddToMessage(error_msg);
+    }
+
+    /// @brief Clear all messages and procedure name.
+    void ClearAll()
+    {
+      ERROR::ClearAll();
+      procedure_name.clear();
+    }
   };
 
 
