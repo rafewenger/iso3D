@@ -348,13 +348,20 @@ void out_stat(const MC_TABLE & isotable)
 
 void usage_msg(std::ostream & out)
 {
-  out << "Usage: iso3D_MCtable_info {MCtable .xit file}" << endl;
+  cout << "Usage: iso3D_MCtable_info [OPTIONS] {MCtable .xit file}"
+       << endl;
 }
 
+void options_msg(std::ostream & out)
+{
+  out << "Options:" <<  endl;
+  out << "  [-poly] [-stat] [-isovert] [-entry {num}] [-h|-help]" << endl;
+}
 
 void usage_error()
 {
   usage_msg(cerr);
+  options_msg(cerr);
   exit(-1);
 }
 
@@ -362,7 +369,31 @@ void help_msg()
 {
   usage_msg(cout);
   cout << endl;
-  cout << "iso3D_MCtable_info - Output information about the Marching Cubes isosurface lookup table." << endl;
+  cout << "iso3D_MCtable_info - Output information about the Marching Cubes"
+       << endl
+       << "  isosurface lookup table." << endl;
+  cout << endl;
+  cout << "-poly:      Print out a complete description of the isosurface polytope" << endl;
+  cout << "            including a list of vertex coordinates, a list of edges,"
+       << endl;
+  cout << "            and a list of facets." << endl;
+  cout << "-stat:      Print out isosurface polytope and table statistics including" << endl;
+  cout << "            number of polytope vertices, edges and facets, number of"
+       << endl;
+  cout << "            table entries, max number of simplices per entry and average"
+       << endl;
+  cout << "            number of simplices per entry.  This is the default." << endl;
+  cout << "-isovert:   Print out list of isosurface vertices." << endl;
+  cout << "-entry <n>: Print entry n from the isosuface table. Print number of"
+       << endl;
+  cout << "            simplices in the entry and a list ofsimplex vertices.  Each"
+       << endl;
+  cout << "            number in the list is the index of an isosurface vertex."
+       << endl;
+  cout << "-h | -help: Print this help message (and exit)." << endl;
+
+  exit(0);
+  
   cout << endl;
 }
 
@@ -379,7 +410,7 @@ void parse_command_line(int argc, char ** argv)
   int iarg = 1;
   while ((iarg < argc) && (argv[iarg][0] == '-')) {
     const std::string s = argv[iarg];
-    if (s == "-help") {
+    if ((s == "-help") || (s == "-h")) {
       help();
     }
     else if (s == "-poly") {
