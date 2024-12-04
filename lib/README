@@ -1,0 +1,5 @@
+This directory should contain libNrrdIO.a.
+
+Source code for libNrrdIO.a can be found in the ijk project.
+Compile the code (using cmake) from that project and then move libNrrdIO.a
+to this directory.
