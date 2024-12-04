@@ -24,3 +24,5 @@ volvis
 garb
 garb.nrrd
 lib/libNrrdIO.a
+src/iso3D/libiso3D.a
+src/iso3D_MCtable/libiso3D_MCtable.a
