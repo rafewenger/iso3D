@@ -1,18 +1,10 @@
-PROJECT(ISO3D)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 #---------------------------------------------------------
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-
-# *** Change this to be the location of the directory containing libnrrdIO.a.
-SET(NRRD_LIBDIR "../ijkPublic/lib")
+SET(NRRD_LIBDIR "../../lib")
 
 #---------------------------------------------------------
-
-IF (NOT CMAKE_BUILD_TYPE)
-  SET (CMAKE_BUILD_TYPE Release CACHE STRING 
-       "Default build type: Release" FORCE)
-ENDIF (NOT CMAKE_BUILD_TYPE)
 
 LINK_DIRECTORIES("${NRRD_LIBDIR}")
 LINK_LIBRARIES(expat NrrdIO z)
@@ -25,21 +17,5 @@ ADD_DEFINITIONS(-DTEEM_ZLIB=1)
 # used on windows builds.
 ADD_DEFINITIONS(-DTEEM_BUILD=1)
 
-ADD_COMPILE_OPTIONS(-Wall -Wno-unused-function)
-
-# Include random library.
-SET(CMAKE_CPP_FLAGS "-std=c++17")
-SET(CMAKE_CPP_FLAGS_RELEASE "-O3")
-
-ADD_EXECUTABLE(iso3D_nrrd_info iso3D_nrrd_info.cpp
-  iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp iso3D_error.cpp)
-
-ADD_EXECUTABLE(iso3D_MCtable_info iso3D_MCtable_info.cpp
-  iso3D_MCtable.cpp iso3D_MCtable_poly.cpp iso3D_MCtable_xitIO.cpp
-  iso3D_error.cpp)
-
-ADD_EXECUTABLE(iso3D_scalar iso3D_scalar.cpp 
-  iso3D_grid.cpp iso3D_scalar_grid.cpp iso3D_grid_nrrd.cpp
-  iso3D_command_line.cpp iso3D_error.cpp)
-
-ADD_CUSTOM_TARGET(doc COMMAND doxygen iso3D_doxygen.config)
+ADD_LIBRARY(iso3D iso3D_command_line.cpp iso3D_error.cpp iso3D_grid.cpp
+  iso3D_grid_nrrd.cpp iso3D_scalar_grid.cpp iso3D_string.cpp)
