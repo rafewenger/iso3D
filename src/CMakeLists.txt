@@ -16,6 +16,8 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${ISO3D_DIR}/lib")
 
 #---------------------------------------------------------
 
+ADD_COMPILE_OPTIONS(-Wall -Wno-unused-function)
+
 ADD_SUBDIRECTORY(iso3D)
 ADD_SUBDIRECTORY(iso3D_MCtable)
 ADD_SUBDIRECTORY(Programs)
