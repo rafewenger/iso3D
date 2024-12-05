@@ -8,5 +8,3 @@ ADD_LIBRARY(iso3D_MCtable iso3D_MCtable.cpp iso3D_MCtable_poly.cpp
   
 #ADD_LIBRARY(iso3D_MCtable iso3D_MCtable_orient.cpp)
 
-TARGET_INCLUDE_DIRECTORIES(iso3D_MCtable PUBLIC ,./iso3D )
-
