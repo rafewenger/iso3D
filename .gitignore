@@ -4,6 +4,9 @@
 test_error
 test_string
 
+# Ignore doc
+doc/*
+
 # Ignore backups
 *~
   
