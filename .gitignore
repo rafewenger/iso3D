@@ -5,7 +5,9 @@ test_error
 test_string
 
 # Ignore doc
-doc/*
+doc/iso3D/*
+doc/man/iso3D/*
+doc/latex/iso3D/*
 
 # Ignore backups
 *~
